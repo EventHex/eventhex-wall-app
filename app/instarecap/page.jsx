@@ -1,4 +1,6 @@
-import React from "react";
+"use client"
+
+import React,{useState} from "react";
 import { Mic, Share2, Maximize2, Settings, Sparkle } from "lucide-react";
 import SpeakersCard from "@/components/instreacap/speakerscard";
 import RightSidebar from "@/components/instreacap/RightSidebar";
@@ -8,6 +10,7 @@ import {
   Barcode,
   BackgroundImage,
   EventhexFooter,
+  InstaRecapGlitter,
 } from "@/public";
 import Image from "next/image";
 export default function CapitalXClarityPage() {
@@ -54,16 +57,20 @@ export default function CapitalXClarityPage() {
     },
   ];
 
+  const [isLogoShow, setIsLogoShow] = useState(true)
   return (
     <div
-      style={{
-        backgroundImage: `url(${BackgroundImage.src})`,
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-      className="min-h-screen "
-    >
+    style={{
+      backgroundImage: `url(${BackgroundImage.src})`,
+      backgroundSize: "100%", // Don't scale the image
+      backgroundPosition: "center", // Start from top left
+      backgroundRepeat: "repeat",
+      width: "100%",
+    }}
+    className="w-full flex items-center justify-center"
+
+
+  >
       {/* Header */}
 
       <section className="w-full flex h-screen">
@@ -93,7 +100,11 @@ export default function CapitalXClarityPage() {
           </div>
         </div>
         {/* right  */}
-        <RightSidebar />
+        <div 
+        
+        className="w-[30%]">
+        <RightSidebar isLogoShow={isLogoShow} Glitter={InstaRecapGlitter}/>
+        </div>
       </section>
     </div>
   );

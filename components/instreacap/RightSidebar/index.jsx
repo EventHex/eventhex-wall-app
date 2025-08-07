@@ -11,7 +11,7 @@ import {
 } from "@/public";
 import Image from "next/image";
 
-export default function RightSidebar() {
+export default function RightSidebar({ Glitter, isLogoShow }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -20,31 +20,31 @@ export default function RightSidebar() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      <div className="w-[30%] px-[56px]  border  border-l  border-[#D4D4D4] border-t-0 border-b-0 border-r-0 overflow-y-auto no-scrollbar">
+      <div className="  w-full px-[56px]  border  border-l  border-[#D4D4D4] border-t-0 border-b-0 border-r-0 overflow-y-auto no-scrollbar">
         <header className="  px-6 pt-[28px] pb-2">
-          <div className=" mx-auto flex justify-between items-center">
+          <div className={`   ${isLogoShow ? "justify-between" : "justify-end"} mx-auto flex items-center`}>
             <Image
               width={100}
               height={100}
               src={Mabrook}
               alt="mabrook"
-              className="w-[118px] "
+              className={`w-[118px]  ${isLogoShow ? "block" : "hidden"} `}
             />
             <div className="flex gap-2">
               <button
-                className="border border-[#D4D4D4] rounded-xl p-2"
+                className={`border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:bg-gray-100 hover:scale-105 active:scale-95 ${isLogoShow ? "block" : "hidden"}`}
                 onClick={() => setIsModalOpen(true)}
               >
-                <Settings className="w-[20px] h-[20px]" />
+                <Settings className="     w-[20px] h-[20px]" />
               </button>
-              <button className="border border-[#D4D4D4] rounded-xl p-2">
+              <button className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:bg-gray-100 hover:scale-105 active:scale-95">
                 <Maximize2 className="w-[20px] h-[20px]" />
               </button>
             </div>
           </div>
         </header>
 
-        <div className="px-6 flex flex-col gap-3 py-4">
+        <div className="flex flex-col gap-3 py-4">
           <Image
             width={100}
             height={100}
@@ -94,8 +94,14 @@ export default function RightSidebar() {
                 {/* third card */}
                 <div className="border  border-[#C7D0FF96] rounded-[15px]">
                   <div className="px-[25px] py-[18px]">
-                    <p className="flex items-center justify-center">
-                      <Sparkle className="w-[14px]" color="#181fec" />
+                    <p className="flex items-center justify-center gap-2">
+                      <Image 
+                      width={100}
+                      height={100}  
+                      src={Glitter} 
+                      className="w-[20px]"
+                      alt="glitter" />
+                      {/* <Sparkle className="w-[14px]" color="#181fec" /> */}
                       <span className="text-[14px] font-[500] text-[#181fec]">
                         AI Facial Recognition
                       </span>
