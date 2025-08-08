@@ -1,7 +1,6 @@
-
 "use client"
 
-import React,{useState} from "react";
+import React, { useState, useEffect } from "react";
 import { DraggableCardDemo } from "@/components/instasnap/animationcard";
 import RightSidebar from "@/components/instasnap/RightSidebar";
 import {
@@ -16,6 +15,7 @@ import {
 } from "@/public";
 
 import Image from "next/image";
+
 export default function CapitalXClarityPage() {
   const articles = [
     {
@@ -59,10 +59,21 @@ export default function CapitalXClarityPage() {
       author: null,
     },
   ];
-  const [isLogoShow, setIsLogoShow] = useState(false)
-  const [isInstaSnap, setIsInstaSnap] = useState(true);
 
-  // animation cards 
+  const [isLogoShow, setIsLogoShow] = useState(false);
+  const [isInstaSnap, setIsInstaSnap] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+
+  // Simulate loading (you can replace this with actual data fetching)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Show shimmer for 2 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Animation cards 
   const AnimationCards = [
     {
       title: "Tyler Durden",
@@ -106,35 +117,68 @@ export default function CapitalXClarityPage() {
         "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       className: "absolute top-8 left-[30%] rotate-[4deg]",
     },
+    {
+      title: "Canada",
+      image:
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-8 left-[30%] rotate-[4deg]",
+    }, {
+      title: "Canada",
+      image:
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-8 left-[30%] rotate-[4deg]",
+    }, {
+      title: "Canada",
+      image:
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-8 left-[30%] rotate-[4deg]",
+    }, {
+      title: "Canada",
+      image:
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-8 left-[30%] rotate-[4deg]",
+    }, {
+      title: "Canada",
+      image:
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-8 left-[30%] rotate-[4deg]",
+    }, {
+      title: "Canada",
+      image:
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-8 left-[30%] rotate-[4deg]",
+    },
   ];
+
   return (
     <div
-  style={{
-    backgroundImage: `url(${Instasnapbackground.src})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center center",
-    backgroundRepeat: "no-repeat",
-    backgroundAttachment: "fixed",
-    minHeight: "100vh",
-    width: "100%",
-    position: "relative",
-  }}
-
->
-
-  <section className="w-full px-5 justify-between flex min-h-screen relative z-10">
-    {/* Your content */}
-    <div className="w-[60%]  ">
-      <header className="w-full h-24 bg-transparent">
-      </header>
-      <DraggableCardDemo AnimationCards={AnimationCards}/>
+      style={{
+        backgroundImage: `url(${Instasnapbackground.src})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+        minHeight: "100vh",
+        width: "100%",
+        position: "relative",
+      }}
+    >
+      <section className="w-full px-5 justify-between flex min-h-screen relative z-10">
+        {/* Your content */}
+        <div className="w-[60%]">
+          <header className="w-full h-24 bg-transparent"></header>
+          <DraggableCardDemo AnimationCards={AnimationCards} />
+        </div>
+        <div className="w-[35%] items-center flex">
+          <RightSidebar 
+            logo={InstasnapLogo} 
+            isLogoShow={isLogoShow} 
+            isInstaSnap={isInstaSnap} 
+            Glitter={InstaSnapGlitter}
+            // isLoading={isLoading} 
+          />
+        </div>
+      </section>
     </div>
-    <div className="w-[35%]  items-center flex ">
-   
-      <RightSidebar  logo={InstasnapLogo} isLogoShow={isLogoShow} isInstaSnap={isInstaSnap} Glitter={InstaSnapGlitter}/>
-    
-    </div>
-  </section>
-</div>
   );
 }
