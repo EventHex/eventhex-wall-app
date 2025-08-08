@@ -30,7 +30,7 @@ export default function RightSidebar({
         onClose={() => setIsModalOpen(false)}
       />
       <div 
-      className="w-full  overflow-y-auto no-scrollbar">
+      className="w-full px-[56px] border border-l border-[#D4D4D4] border-t-0 border-b-0 border-r-0 overflow-y-auto no-scrollbar">
         {/* Header */}
         <header className="px-6 pt-[28px] pb-2">
           <div
@@ -86,7 +86,7 @@ style={
     : {}
 }
          className="">
-        <div className="flex flex-col gap-3 px-4 py-4">
+        <div className="flex flex-col gap-3 py-4">
           <Image
             width={600}
             height={200}
@@ -94,7 +94,6 @@ style={
             alt="mabrook banner"
             className="w-full rounded-xl"
           />
-          <div className=" flex flex-col gap-5 px-12">
           <div className="flex flex-col justify-center items-center">
             <h1
               className={`   ${
@@ -104,14 +103,16 @@ style={
               Mabrook Gulf Toppers 2025
             </h1>
             <p
-              className="text-[#B1B1B1]    text-center text-[14px] font-[500]"
+              className={`${
+                isInstaSnap ? "text-[#B1B1B1]" : "text-green-50"
+              } text-center text-[14px] font-[500]`}
             >
               12 August 2025 | 9:00 am
               <br />
               Royal Convention Centre, Calicut
             </p>
           </div>
-      
+        </div>
 
         {/* Barcode Card */}
         <div className="relative">
@@ -134,7 +135,7 @@ style={
 
               {/* Text */}
               <div className="flex flex-col items-center justify-center">
-                <h1 className="text-[18px] text-[#375DFB] font-[600]">Get Your Photos</h1>
+                <h1 className="text-[18px] font-[600]">Get Your Photos</h1>
                 <p className="text-[14px] text-center font-[400] text-[#525866]">
                   Scan to access your personalized photo gallery instantly
                 </p>
@@ -163,17 +164,15 @@ style={
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center py-[15px]">
           <p className="flex items-center justify-center gap-[8px]">
-            <span className= "text-[#989898]text-black text-[12px] font-[400]">Powered by</span>
+            <span className={` ${isInstaSnap ? "text-[#989898]":"text-black"} text-[12px] font-[400]`}>Powered by</span>
             {isInstaSnap ? (
               <Image src={InstasnapLogo} alt=" eventlogo" />
             ) : (
               <Image src={EventhexFooter} alt="eventhex footer" />
             )}
           </p>
-        </div>
-        </div>
         </div>
         </div>
       </div>

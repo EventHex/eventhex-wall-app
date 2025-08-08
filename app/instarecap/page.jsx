@@ -76,7 +76,7 @@ export default function CapitalXClarityPage() {
 
       <section className="w-full flex min-h-screen">
         {/* left */}
-        <div className=" w-[70%] px-2 overflow-y-auto no-scrollbar">
+        <div className=" w-[70%]  border border-l-0 border-[#D4D4D4] border-t-0 border-b-0 border-r px-2 overflow-y-auto no-scrollbar">
           <header className="bg-white border-b sticky z-10 top-0  mb-5 border-[#D4D4D4] pb-5 px-10 ">
             <div className=" mx-auto flex justify-between pt-[28px] items-center">
               <div className="flex flex-col  gap-3">

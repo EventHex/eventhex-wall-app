@@ -11,7 +11,10 @@ import {
   BackgroundImage,
   EventhexFooter,
   InstaSnapGlitter,
+  Instasnapbackground,
+  InstasnapLogo
 } from "@/public";
+
 import Image from "next/image";
 export default function CapitalXClarityPage() {
   const articles = [
@@ -107,7 +110,7 @@ export default function CapitalXClarityPage() {
   return (
     <div
   style={{
-    backgroundImage: `url(${BackgroundImage.src})`,
+    backgroundImage: `url(${Instasnapbackground.src})`,
     backgroundSize: "cover",
     backgroundPosition: "center center",
     backgroundRepeat: "no-repeat",
@@ -116,20 +119,24 @@ export default function CapitalXClarityPage() {
     width: "100%",
     position: "relative",
   }}
+  className=""
 >
   {/* Black overlay */}
-  <div className="absolute inset-0 bg-black/70  z-0"></div>
+  {/* <div className="absolute inset-0 bg-black/70  z-0"></div> */}
   
   {/* Header */}
-  <section className="w-full flex min-h-screen relative z-10">
+  <section className="w-full justify-between flex min-h-screen relative z-10">
     {/* Your content */}
-    <div className="w-[70%]">
-      <header className="w-full h-24 bg-white">
+    <div className="w-[60%]  ">
+      <header className="w-full h-24 bg-transparent">
       </header>
       <DraggableCardDemo AnimationCards={AnimationCards}/>
     </div>
-    <div className="w-[30%]">
-      <RightSidebar isLogoShow={isLogoShow} isInstaSnap={isInstaSnap} Glitter={InstaSnapGlitter}/>
+    <div className="w-[35%] bg-amber-300 items-center flex ">
+      <div className="w-full ">
+
+      <RightSidebar  logo={InstasnapLogo} isLogoShow={isLogoShow} isInstaSnap={isInstaSnap} Glitter={InstaSnapGlitter}/>
+      </div>
     </div>
   </section>
 </div>
