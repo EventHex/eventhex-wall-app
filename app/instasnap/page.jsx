@@ -3,7 +3,7 @@
 
 import React,{useState} from "react";
 import { DraggableCardDemo } from "@/components/instasnap/animationcard";
-import RightSidebar from "@/components/instreacap/RightSidebar";
+import RightSidebar from "@/components/instasnap/RightSidebar";
 import {
   Mabrook,
   MabrookBanner,
@@ -119,24 +119,20 @@ export default function CapitalXClarityPage() {
     width: "100%",
     position: "relative",
   }}
-  className=""
+
 >
-  {/* Black overlay */}
-  {/* <div className="absolute inset-0 bg-black/70  z-0"></div> */}
-  
-  {/* Header */}
-  <section className="w-full justify-between flex min-h-screen relative z-10">
+
+  <section className="w-full px-5 justify-between flex min-h-screen relative z-10">
     {/* Your content */}
     <div className="w-[60%]  ">
       <header className="w-full h-24 bg-transparent">
       </header>
       <DraggableCardDemo AnimationCards={AnimationCards}/>
     </div>
-    <div className="w-[35%] bg-amber-300 items-center flex ">
-      <div className="w-full ">
-
+    <div className="w-[35%]  items-center flex ">
+   
       <RightSidebar  logo={InstasnapLogo} isLogoShow={isLogoShow} isInstaSnap={isInstaSnap} Glitter={InstaSnapGlitter}/>
-      </div>
+    
     </div>
   </section>
 </div>
