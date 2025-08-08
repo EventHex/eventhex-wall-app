@@ -37,7 +37,7 @@ export const DraggableCardBody = ({
   const opacity = useSpring(useTransform(mouseX, [-300, 0, 300], [0.8, 1, 0.8]), springConfig);
   const glareOpacity = useSpring(useTransform(mouseX, [-300, 0, 300], [0.2, 0, 0.2]), springConfig);
 
-  // Generate random floating path
+  // Generate random floating path in every direction across the entire screen
   const generateFloatingPath = () => {
     if (typeof window === "undefined") return [];
     
@@ -53,29 +53,71 @@ export const DraggableCardBody = ({
     const maxY = screenHeight / 2 - cardHeight / 2;
     
     const points = [];
-    for (let i = 0; i < 6; i++) {
-      // Generate truly random points across the entire screen area
-      const x = Math.random() * (maxX - minX) + minX;
-      const y = Math.random() * (maxY - minY) + minY;
+    
+    // Generate completely random points across the entire screen
+    for (let i = 0; i < 10; i++) {
+      // Generate random X position with decimal multiplier
+      const randomXMultiplier = Math.random() * 0.95 + 0.025; // 0.025 to 0.975
+      const x = minX + (randomXMultiplier * (maxX - minX));
+      
+      // Generate random Y position with decimal multiplier
+      const randomYMultiplier = Math.random() * 0.95 + 0.025; // 0.025 to 0.975
+      const y = minY + (randomYMultiplier * (maxY - minY));
       
       points.push({ x, y });
     }
     
-    // Add some specific diagonal movement patterns
-    const patterns = [
-      { x: minX, y: minY }, // top-left
-      { x: maxX, y: maxY }, // bottom-right  
-      { x: minX, y: maxY }, // bottom-left
-      { x: maxX, y: minY }, // top-right
-      { x: 0, y: minY },    // top-center
-      { x: 0, y: maxY },    // bottom-center
+    // Add corner and edge points for more variety
+    const cornerAndEdgePoints = [
+      // Corners with random offset
+      { 
+        x: minX + (Math.random() * 0.1 * (maxX - minX)), 
+        y: minY + (Math.random() * 0.1 * (maxY - minY)) 
+      }, // Top-left
+      { 
+        x: maxX - (Math.random() * 0.1 * (maxX - minX)), 
+        y: minY + (Math.random() * 0.1 * (maxY - minY)) 
+      }, // Top-right
+      { 
+        x: minX + (Math.random() * 0.1 * (maxX - minX)), 
+        y: maxY - (Math.random() * 0.1 * (maxY - minY)) 
+      }, // Bottom-left
+      { 
+        x: maxX - (Math.random() * 0.1 * (maxX - minX)), 
+        y: maxY - (Math.random() * 0.1 * (maxY - minY)) 
+      }, // Bottom-right
+      
+      // Edge centers with random variation
+      { 
+        x: minX + (Math.random() * 0.05 * (maxX - minX)), 
+        y: minY + (0.4 + Math.random() * 0.2) * (maxY - minY) 
+      }, // Left edge
+      { 
+        x: maxX - (Math.random() * 0.05 * (maxX - minX)), 
+        y: minY + (0.4 + Math.random() * 0.2) * (maxY - minY) 
+      }, // Right edge
+      { 
+        x: minX + (0.4 + Math.random() * 0.2) * (maxX - minX), 
+        y: minY + (Math.random() * 0.05 * (maxY - minY)) 
+      }, // Top edge
+      { 
+        x: minX + (0.4 + Math.random() * 0.2) * (maxX - minX), 
+        y: maxY - (Math.random() * 0.05 * (maxY - minY)) 
+      }, // Bottom edge
     ];
     
-    // Mix random points with diagonal patterns
-    const shuffledPatterns = patterns.sort(() => Math.random() - 0.5);
-    const mixedPoints = [...points.slice(0, 3), ...shuffledPatterns.slice(0, 3)];
+    // Combine all points and shuffle completely randomly
+    const allPoints = [...points, ...cornerAndEdgePoints];
     
-    return mixedPoints.sort(() => Math.random() - 0.5);
+    // Shuffle array multiple times for true randomness
+    for (let i = 0; i < 3; i++) {
+      for (let j = allPoints.length - 1; j > 0; j--) {
+        const k = Math.floor(Math.random() * (j + 1));
+        [allPoints[j], allPoints[k]] = [allPoints[k], allPoints[j]];
+      }
+    }
+    
+    return allPoints;
   };
 
   // Start floating animation
@@ -88,31 +130,35 @@ export const DraggableCardBody = ({
     const animateToNextPoint = (index = 0) => {
       if (!isFloating || index >= path.length) {
         if (isFloating) {
-          // Restart the animation with new random path
-          setTimeout(() => startFloating(), 1000);
+          // Restart with new random path, shorter delay for more dynamic movement
+          setTimeout(() => startFloating(), 1000 + Math.random() * 2000);
         }
         return;
       }
 
       const point = path[index];
-      const duration = 4 + Math.random() * 6; // 4-10 seconds per movement
+      // Longer duration with more variety for multi-directional movement
+      const baseDuration = 4;
+      const randomMultiplier = Math.random() * 0.8 + 0.6; // 0.6 to 1.4
+      const duration = baseDuration * randomMultiplier;
 
-      console.log(`Moving to point ${index}:`, point); // Debug log
+      console.log(`Moving to point ${index}:`, point, `Duration: ${duration.toFixed(2)}s`);
 
       const animation = controls.start({
         x: point.x,
         y: point.y,
-        rotate: Math.random() * 30 - 15, // Random rotation during movement
+        rotate: (Math.random() - 0.5) * 25, // More rotation variety for multi-directional movement
         transition: {
           duration,
-          ease: "easeInOut",
+          ease: ["easeInOut", "easeIn", "easeOut", "linear"][Math.floor(Math.random() * 4)], // Random easing
           type: "tween",
         },
       });
 
       animation.then(() => {
         if (isFloating) {
-          setTimeout(() => animateToNextPoint(index + 1), 1000 + Math.random() * 2000);
+          const pauseDuration = (0.5 + Math.random() * 1.5) * 1000; // 0.5-2 second pause
+          setTimeout(() => animateToNextPoint(index + 1), pauseDuration);
         }
       });
     };
@@ -130,9 +176,10 @@ export const DraggableCardBody = ({
 
   useEffect(() => {
     // Start floating after component mounts
+    const randomDelay = Math.random() * 0.8 * 3000; // Random delay 0-2.4 seconds
     const timer = setTimeout(() => {
       startFloating();
-    }, Math.random() * 2000); // Random delay 0-2 seconds
+    }, randomDelay);
 
     return () => {
       clearTimeout(timer);
@@ -188,11 +235,11 @@ export const DraggableCardBody = ({
         right: window.innerWidth,
         bottom: window.innerHeight,
       }}
-      // Initial random position - ensure full coverage
+      // Initial position - completely random across entire screen
       initial={{
-        x: (Math.random() - 0.5) * window?.innerWidth || 0,
-        y: (Math.random() - 0.5) * window?.innerHeight || 0,
-        rotate: Math.random() * 20 - 10, // Add slight random rotation
+        x: ((Math.random() - 0.5) * 0.9) * (window?.innerWidth || 0),
+        y: ((Math.random() - 0.5) * 0.9) * (window?.innerHeight || 0),
+        rotate: (Math.random() - 0.5) * 20, // Random initial rotation
       }}
       animate={controls}
       onDragStart={() => {
@@ -222,10 +269,11 @@ export const DraggableCardBody = ({
         if (velocityMagnitude > 500) {
           // If dragged with high velocity, add momentum
           const bounce = Math.min(0.8, velocityMagnitude / 1000);
+          const momentumMultiplier = Math.random() * 0.15 + 0.15; // 0.15 to 0.3
           
           controls.start({
-            x: info.point.x + currentVelocityX * 0.2,
-            y: info.point.y + currentVelocityY * 0.2,
+            x: info.point.x + currentVelocityX * momentumMultiplier,
+            y: info.point.y + currentVelocityY * momentumMultiplier,
             transition: {
               duration: 0.8,
               ease: [0.2, 0, 0, 1],
@@ -239,10 +287,11 @@ export const DraggableCardBody = ({
         }
 
         // Resume floating after a delay
+        const resumeDelay = (2 + Math.random() * 1.5) * 1000; // 2-3.5 seconds
         setTimeout(() => {
           setIsFloating(true);
           startFloating();
-        }, 2000);
+        }, resumeDelay);
       }}
       style={{
         rotateX,
