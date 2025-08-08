@@ -5,11 +5,17 @@ import BackgroundImage from "../public/instarecap/image/backgorund.png"
 import EventhexFooter from "../public/Eventhexfooter.svg"
 import InstaSnapGlitter from "../public/footer/instasnap.svg"
 import InstaRecapGlitter from "../public/footer/instarecap.svg"
+import InstasnapGellery from "../public/instasnap/image/gellary.svg"
+import InstasnapContect from "../public/instasnap/image/contect.svg"
+import InstasnapGlitter from "../public/instasnap/image/glliter.svg"
 export { Mabrook,
     MabrookBanner,
     Barcode,
     BackgroundImage,
     EventhexFooter,
     InstaSnapGlitter,
-    InstaRecapGlitter
+    InstaRecapGlitter,
+    InstasnapGellery,
+    InstasnapContect,
+    InstasnapGlitter
  }

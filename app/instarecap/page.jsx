@@ -1,3 +1,4 @@
+
 "use client"
 
 import React,{useState} from "react";
@@ -62,18 +63,18 @@ export default function CapitalXClarityPage() {
     <div
     style={{
       backgroundImage: `url(${BackgroundImage.src})`,
-      backgroundSize: "100%", // Don't scale the image
-      backgroundPosition: "center", // Start from top left
-      backgroundRepeat: "repeat",
+      backgroundSize: "cover", // This will cover the entire container
+      backgroundPosition: "center center", // Center the background
+      backgroundRepeat: "no-repeat", // Prevent repetition for better coverage
+      backgroundAttachment: "fixed", // Optional: keeps background fixed while scrolling
+      minHeight: "100vh", // Ensure minimum full viewport height
       width: "100%",
     }}
     className="w-full flex items-center justify-center"
-
-
   >
       {/* Header */}
 
-      <section className="w-full flex h-screen">
+      <section className="w-full flex min-h-screen">
         {/* left */}
         <div className=" w-[70%] px-2 overflow-y-auto no-scrollbar">
           <header className="bg-white border-b sticky z-10 top-0  mb-5 border-[#D4D4D4] pb-5 px-10 ">
@@ -93,7 +94,7 @@ export default function CapitalXClarityPage() {
             </div>
           </header>
           {/* card loop */}
-          <div className="flex flex-col px-10 gap-[25px]">
+          <div className="flex flex-col   px-10 gap-[25px]">
             {articles.map((article) => (
               <SpeakersCard key={article.id} article={article} />
             ))}
@@ -103,7 +104,7 @@ export default function CapitalXClarityPage() {
         <div 
         
         className="w-[30%]">
-        <RightSidebar isLogoShow={isLogoShow} Glitter={InstaRecapGlitter}/>
+        <RightSidebar isLogoShow={isLogoShow}  mode="instarecap" Glitter={InstaRecapGlitter}/>
         </div>
       </section>
     </div>

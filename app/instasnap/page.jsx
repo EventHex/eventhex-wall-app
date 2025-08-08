@@ -1,3 +1,4 @@
+
 "use client"
 
 import React,{useState} from "react";
@@ -56,6 +57,7 @@ export default function CapitalXClarityPage() {
     },
   ];
   const [isLogoShow, setIsLogoShow] = useState(false)
+  const [isInstaSnap, setIsInstaSnap] = useState(true);
 
   // animation cards 
   const AnimationCards = [
@@ -104,34 +106,32 @@ export default function CapitalXClarityPage() {
   ];
   return (
     <div
-      style={{
-        backgroundImage: `url(${BackgroundImage.src})`,
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-      className="min-h-screen "
-    >
-      {/* Header */}
-
-      <section className="w-full flex h-screen">
-        {/* left */}
-
-        <div className="w-[70%]">
-        <header className=" w-full h-24 bg-white">
-
-</header>
-<DraggableCardDemo AnimationCards={AnimationCards}/>
-
-        </div>
-        <div className="w-[30%]">
-
-    {/* right  */}
-    <RightSidebar isLogoShow={isLogoShow}  Glitter={InstaSnapGlitter}/>
-        </div>
-      
-    
-      </section>
+  style={{
+    backgroundImage: `url(${BackgroundImage.src})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    backgroundRepeat: "no-repeat",
+    backgroundAttachment: "fixed",
+    minHeight: "100vh",
+    width: "100%",
+    position: "relative",
+  }}
+>
+  {/* Black overlay */}
+  <div className="absolute inset-0 bg-black/70  z-0"></div>
+  
+  {/* Header */}
+  <section className="w-full flex min-h-screen relative z-10">
+    {/* Your content */}
+    <div className="w-[70%]">
+      <header className="w-full h-24 bg-white">
+      </header>
+      <DraggableCardDemo AnimationCards={AnimationCards}/>
     </div>
+    <div className="w-[30%]">
+      <RightSidebar isLogoShow={isLogoShow} isInstaSnap={isInstaSnap} Glitter={InstaSnapGlitter}/>
+    </div>
+  </section>
+</div>
   );
 }
