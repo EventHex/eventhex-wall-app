@@ -1,36 +1,46 @@
+"use client";
 
-// import eventPhoto1 from '@/assets/event-photo-1.jpg';
-// import eventPhoto2 from '@/assets/event-photo-2.jpg';
-// import eventPhoto3 from '@/assets/event-photo-3.jpg';
-// import eventPhoto4 from '@/assets/event-photo-4.jpg';
-// import eventPhoto5 from '@/assets/event-photo-5.jpg';
-// import eventPhoto6 from '@/assets/event-photo-6.jpg';
-// import eventPhoto7 from '@/assets/event-photo-7.jpg';
-// import eventPhoto8 from '@/assets/event-photo-8.jpg';
-// import eventPhoto9 from '@/assets/event-photo-9.jpg';
-// import eventPhoto10 from '@/assets/event-photo-10.jpg';
-// import eventPhoto11 from '@/assets/event-photo-11.jpg';
-// import eventPhoto12 from '@/assets/event-photo-12.jpg';
 import Image from "next/image";
-import {WallImage} from "../../../public"
-
-const photos = [
-  { src: WallImage, alt: 'Corporate gala celebration' },
-  { src: WallImage, alt: 'Wedding reception moment' },
-  { src: WallImage, alt: 'Conference networking' },
-  { src: WallImage, alt: 'Birthday party celebration' },
-  { src: WallImage, alt: 'Graduation ceremony' },
-  { src: WallImage, alt: 'Music concert crowd' },
-  { src: WallImage, alt: 'Corporate team building' },
-  { src: WallImage, alt: 'Award ceremony' },
-  { src: WallImage, alt: 'Food festival' },
-  { src: WallImage, alt: 'Art gallery opening' },
-  { src: WallImage, alt: 'Sports tournament' },
-  { src: WallImage, alt: 'Charity gala' },
-];
+import { useEffect, useMemo, useState } from "react";
+import { fetchWallFamePhotos } from "@/utils/data";
+import { WallImage } from "@/public";
 
 export const PhotoFlow = () => {
-  console.log('Animation config - float-left duration: 40s, float-right duration: 40s');
+  const [apiPhotos, setApiPhotos] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        setIsLoading(true);
+        // Use centralized data util. See usage note in `@/utils/data`.
+        const photosFromApi = await fetchWallFamePhotos();
+        setApiPhotos(photosFromApi);
+      } catch (error) {
+        console.error("Failed to fetch wall-fame images", error);
+        setApiPhotos([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    load();
+    return () => {};
+  }, []);
+
+  const photos = useMemo(() => {
+    if (Array.isArray(apiPhotos) && apiPhotos.length > 0) return apiPhotos;
+    const wallSrc = typeof WallImage === "string" ? WallImage : WallImage?.src;
+    return wallSrc ? [{ src: wallSrc, alt: "Wall photo" }] : [];
+  }, [apiPhotos]);
+
+  console.log(`Animation config - float-left/right duration: 30-60s | photos: ${photos.length} | loading: ${isLoading}`);
+
+  if (photos.length === 0) {
+    return (
+      <div className="relative w-full h-full overflow-hidden" />
+    );
+  }
 
   return (
     <div className="relative w-full h-full overflow-hidden ">
@@ -82,7 +92,10 @@ export const PhotoFlow = () => {
                 <Image
                   src={photo.src}
                   alt={photo.alt}
+                  width={192}
+                  height={128}
                   className="relative w-48 h-32 object-cover rounded-sm"
+                  unoptimized
                 />
               </div>
             </div>
@@ -118,7 +131,10 @@ export const PhotoFlow = () => {
                 <Image
                   src={photo.src}
                   alt={photo.alt}
+                  width={192}
+                  height={128}
                   className="relative w-48 h-32 object-cover rounded-sm"
+                  unoptimized
                 />
               </div>
             </div>
