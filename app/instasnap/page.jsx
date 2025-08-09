@@ -1,7 +1,7 @@
 // "use client";
 
 // import React, { useState, useEffect } from "react";
-// import { DraggableCardDemo } from "@/components/instasnap/animationcard";
+
 // import RightSidebar from "@/components/instasnap/RightSidebar";
 // import {
 //   Mabrook,

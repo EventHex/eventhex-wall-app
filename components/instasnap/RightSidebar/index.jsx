@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectSessionModal from "./SelectSessionModal";
-import { Maximize2, Settings } from "lucide-react";
+import { Maximize2, Minimize2, Settings } from "lucide-react";
 import {
   Mabrook,
   MabrookBanner,
@@ -13,18 +13,70 @@ import {
   Instasnapbackground,
 } from "@/public";
 import Image from "next/image";
-import ShimmerCard from "../shimmer"; // Import your shimmer component
+
 
 export default function RightSidebar({
   logo,
   Glitter,
   isLogoShow,
   isInstaSnap,
-  isLoading = false, // Add loading prop
+
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const isInstaRecap = !isInstaSnap; // Opposite of InstaSnap
+
+  useEffect(() => {
+    const updateIsFullscreen = () => {
+      const fsElement =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+      setIsFullscreen(Boolean(fsElement));
+    };
+
+    document.addEventListener("fullscreenchange", updateIsFullscreen);
+    document.addEventListener("webkitfullscreenchange", updateIsFullscreen);
+    document.addEventListener("mozfullscreenchange", updateIsFullscreen);
+    document.addEventListener("MSFullscreenChange", updateIsFullscreen);
+
+    updateIsFullscreen();
+
+    return () => {
+      document.removeEventListener("fullscreenchange", updateIsFullscreen);
+      document.removeEventListener("webkitfullscreenchange", updateIsFullscreen);
+      document.removeEventListener("mozfullscreenchange", updateIsFullscreen);
+      document.removeEventListener("MSFullscreenChange", updateIsFullscreen);
+    };
+  }, []);
+
+  const toggleFullscreen = async () => {
+    if (typeof document === "undefined") return;
+    try {
+      const isCurrentlyFullscreen =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+
+      if (isCurrentlyFullscreen) {
+        if (document.exitFullscreen) await document.exitFullscreen();
+        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) await document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) await document.msExitFullscreen();
+      } else {
+        const rootElement = document.documentElement;
+        if (rootElement.requestFullscreen) await rootElement.requestFullscreen();
+        else if (rootElement.webkitRequestFullscreen) await rootElement.webkitRequestFullscreen();
+        else if (rootElement.mozRequestFullScreen) await rootElement.mozRequestFullScreen();
+        else if (rootElement.msRequestFullscreen) await rootElement.msRequestFullscreen();
+      }
+    } catch (err) {
+      // ignore
+    }
+  };
 
   return (
     <>
@@ -40,8 +92,17 @@ export default function RightSidebar({
             <div className="flex items-center">
               {/* Buttons */}
               <div className="flex gap-2">
-                <button className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:scale-105 active:scale-95 bg-[#C3C3C396] text-white hover:bg-white hover:text-black">
-                  <Maximize2 className="w-[20px] h-[20px]" />
+                <button
+                  onClick={toggleFullscreen}
+                  className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:scale-105 active:scale-95 bg-[#C3C3C396] text-white hover:bg-white hover:text-black"
+                  aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                  title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                >
+                  {isFullscreen ? (
+                    <Minimize2 className="w-[20px] h-[20px]" />
+                  ) : (
+                    <Maximize2 className="w-[20px] h-[20px]" />
+                  )}
                 </button>
               </div>
             </div>
@@ -64,9 +125,7 @@ export default function RightSidebar({
           {/* Content wrapper with proper spacing */}
           <div className="relative z-10 ph-full">
             {/* Conditional rendering: Show shimmer when loading, actual content when not */}
-            {isLoading ? (
-              <ShimmerCard />
-            ) : (
+         
               <div className="border px-[20px]">
                 {/* Event Banner Section */}
                 <div className="flex flex-col gap-3 py-4">
@@ -171,7 +230,7 @@ export default function RightSidebar({
                   </p>
                 </div>
               </div>
-            )}
+            
           </div>
         </div>
       </div>
