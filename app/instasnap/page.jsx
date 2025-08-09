@@ -160,11 +160,12 @@ const Index = () => {
               backgroundRepeat: "no-repeat",
               backgroundAttachment: "fixed",
               minHeight: "100vh",
+              height: "auto",
             width: "100%",
       position: "relative",
            }}
     
-    className="h-screen w-full bg-background flex">
+    className="min-h-screen w-full bg-background flex">
       {/* Main photo display area - no content, just flowing photos */}
       <div className="w-[70%]">
         <PhotoFlow />
