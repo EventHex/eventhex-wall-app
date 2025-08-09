@@ -29,6 +29,24 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+.animate-float-left { animation-name: float-left; }
+.animate-float-right { animation-name: float-right; }
+@keyframes float-left {
+  0% { transform: translateX(-35vw) rotate(var(--rotation, 0deg)); }
+  100% { transform: translateX(105vw) rotate(var(--rotation, 0deg)); }
+}
+@keyframes float-right {
+  0% { transform: translateX(105vw) rotate(var(--rotation, 0deg)); }
+  100% { transform: translateX(-35vw) rotate(var(--rotation, 0deg)); }
+}
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 6s linear infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
