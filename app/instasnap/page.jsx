@@ -145,7 +145,7 @@
 //   );
 // }
 
-import { Instasnapbackground } from '@/public';
+import { Instasnapbackground, InstaSnapGlitter } from '@/public';
 import { PhotoFlow } from '../../components/instasnap/testcomponent/left';
 import { EventSidebar } from '../../components/instasnap/testcomponent/right';
 import RightSidebar from "@/components/instasnap/RightSidebar";
@@ -174,7 +174,7 @@ const Index = () => {
       {/* Right sidebar */}
       {/* <EventSidebar /> */}
       <div className="w-[30%]">
-        <RightSidebar/>
+        <RightSidebar   Glitter={InstaSnapGlitter}/>
       </div>
     </div>
   );

@@ -84,9 +84,9 @@ export default function RightSidebar({
                       Mabrook Gulf Toppers 2025
                     </h1>
                     <p
-                      className={`text-center text-[14px] font-[500] ${
-                        isInstaSnap ? "text-[#B1B1B1]" : "text-gray-600"
-                      }`}
+                      className="text-center text-[14px] font-[500] 
+                       text-[#B1B1B1]" 
+                  
                     >
                       12 August 2025 | 9:00 am
                       <br />
@@ -115,9 +115,9 @@ export default function RightSidebar({
                         {/* Text */}
                         <div className="flex flex-col items-center px-10 justify-center">
                           <h1
-                            className={`text-[18px] font-[600] ${
-                              isInstaSnap ? "text-white" : "text-black"
-                            }`}
+                            className="text-[18px] font-[600] 
+                         text-white" 
+                          
                           >
                             Get Your Photos
                           </h1>
