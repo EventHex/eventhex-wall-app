@@ -9,7 +9,7 @@ import { get } from "@/utils/functions";
  */
 export async function fetchWallFamePhotos() {
   try {
-    const responseBody = await get("wall-fame");
+    const responseBody = await get("/wall-fame");
 
     const rawItems = Array.isArray(responseBody)
       ? responseBody
