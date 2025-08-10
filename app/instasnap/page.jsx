@@ -97,7 +97,10 @@ const Index = (props) => {
           </div>
         </header>
         {eventId && eventData && (
-          <PhotoFlow eventId={eventId} eventData={eventData} />
+          <div className="w-full h-full">
+
+            <PhotoFlow eventId={eventId} eventData={eventData} />
+          </div>
         )}
       </div>
 

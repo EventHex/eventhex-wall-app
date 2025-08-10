@@ -21,6 +21,7 @@ export default function CapitalXClarityPage() {
   const [eventData, setEventData] = useState(null);
   const [articles, setArticles] = useState([]);
   const [domain, setDomain] = useState(null);
+  const [selectedSession, setSelectedSession] = useState(null);
 
   // Auto-scroll refs and variables
   const containerRef = useRef(null);
@@ -52,11 +53,21 @@ export default function CapitalXClarityPage() {
           }))
         : [];
       setArticles(dynamicArticles);
+      
+      // Set the first session as default selected session only if no session is currently selected
+      if (dynamicArticles.length > 0 && !selectedSession) {
+        setSelectedSession(dynamicArticles[0]);
+      }
     }
     if (eventId) {
       fetchSessionDetails();
     }
-  }, [eventId]);
+  }, [eventId]); // Remove selectedSession from dependency to avoid infinite loops
+
+  // Function to handle session selection from modal
+  const handleSessionSelect = (session) => {
+    setSelectedSession(session);
+  };
 
   // Auto-scroll functionality
   useEffect(() => {
@@ -104,8 +115,10 @@ export default function CapitalXClarityPage() {
   }, [articles]);
 
   const [isLogoShow, setIsLogoShow] = useState(true);
-  const headerTitle = articles?.[0]?.title || "Capital X Clarity: A Founder's roadmap to fund raising and";
-  const headerSpeaker = articles?.[0]?.author || "Safari Sanders Dennyes";
+  
+  // Use selected session data for header, fallback to first article if no session selected
+  const headerTitle = selectedSession?.title || articles?.[0]?.title || "Capital X Clarity: A Founder's roadmap to fund raising and";
+  const headerSpeaker = selectedSession?.author || articles?.[0]?.author || "Safari Sanders Dennyes";
 
   // Create duplicated articles array for infinite scrolling
   const duplicatedArticles = [...articles, ...articles];
@@ -173,6 +186,8 @@ export default function CapitalXClarityPage() {
                 eventId={eventId}
                 eventData={eventData}
                 domain={domain}
+                onSessionSelect={handleSessionSelect}
+                selectedSession={selectedSession}
               />
             )}
           </div>

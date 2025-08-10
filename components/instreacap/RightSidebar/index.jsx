@@ -21,6 +21,8 @@ export default function RightSidebar({
   eventId,
   eventData,
   domain,
+  onSessionSelect,
+  selectedSession,
 }) {
 
   console.log(eventData,'daaat  ');
@@ -128,6 +130,8 @@ export default function RightSidebar({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         eventId={eventId}
+        onSessionSelect={onSessionSelect}
+        selectedSession={selectedSession}
       />
       <div 
       className="w-full  py-[22px] overflow-y-auto no-scrollbar">

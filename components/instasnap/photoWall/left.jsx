@@ -34,6 +34,22 @@ export const PhotoFlow = ({ eventId, eventData }  ) => {
     return wallSrc ? [{ src: wallSrc, alt: "Wall photo" }] : [];
   }, [apiPhotos]);
 
+  // Create a shuffled array of photos to avoid repetition
+  const shuffledPhotos = useMemo(() => {
+    if (photos.length === 0) return [];
+    
+    // Create multiple copies of photos array and shuffle each copy
+    const copies = [];
+    const totalPhotosNeeded = 150; // 75 left + 75 right
+    
+    for (let i = 0; i < Math.ceil(totalPhotosNeeded / photos.length); i++) {
+      const shuffled = [...photos].sort(() => Math.random() - 0.5);
+      copies.push(...shuffled);
+    }
+    
+    return copies.slice(0, totalPhotosNeeded);
+  }, [photos]);
+
   console.log(`Animation config - float-left/right duration: 30-60s | photos: ${photos.length} | loading: ${isLoading}`);
 
   if (photos.length === 0) {
@@ -43,7 +59,7 @@ export const PhotoFlow = ({ eventId, eventData }  ) => {
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full   h-full">
       <div className="relative w-full h-full overflow-hidden ">
         {/* Enhanced background effects */}
         <div className="absolute inset-0">
@@ -67,8 +83,9 @@ export const PhotoFlow = ({ eventId, eventData }  ) => {
 
         {/* Photos flowing LEFT TO RIGHT */}
         {[...Array(75)].map((_, i) => {
-          const photoIndex = i % photos.length;
-          const photo = photos[photoIndex];
+          const photo = shuffledPhotos[i];
+          if (!photo) return null;
+          
           const rotation = (Math.random() - 0.5) * 120; // -60 to +60 degrees for dramatic tilt
           const horizontalOffset = (Math.random() - 0.5) * 100; // Random horizontal slide -50px to +50px
           const speed = 30 + Math.random() * 30; // Random speed between 30s and 60s
@@ -86,28 +103,16 @@ export const PhotoFlow = ({ eventId, eventData }  ) => {
                 transform: `rotate(${rotation}deg)`,
               }}
             >
-              <div className="relative group">
-                {/* Small white album frame */}
-                <div className="bg-white p-1.5 rounded-lg shadow-2xl transform group-hover:scale-105 transition-all duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg blur-xl opacity-50" />
-                  <Image
-                    src={photo.src}
-                    alt={photo.alt}
-                    width={192}
-                    height={128}
-                    className="relative w-48 h-32 object-cover rounded-sm"
-                    unoptimized
-                  />
-                </div>
-              </div>
+             
             </div>
           );
         })}
 
         {/* Photos flowing RIGHT TO LEFT */}
         {[...Array(75)].map((_, i) => {
-          const photoIndex = (i + 8) % photos.length;
-          const photo = photos[photoIndex];
+          const photo = shuffledPhotos[i + 75]; // Use different photos for right flow
+          if (!photo) return null;
+          
           const rotation = (Math.random() - 0.5) * 120; // -60 to +60 degrees for dramatic tilt
           const horizontalOffset = (Math.random() - 0.5) * 100; // Random horizontal slide -50px to +50px
           const speed = 30 + Math.random() * 30; // Random speed between 30s and 60s
@@ -125,9 +130,9 @@ export const PhotoFlow = ({ eventId, eventData }  ) => {
                 transform: `rotate(${rotation}deg)`,
               }}
             >
-              <div className="relative group">
+              <div className="relative bg-amber-200 group">
                 {/* Small white album frame */}
-                <div className="bg-white p-1.5 rounded-lg shadow-2xl transform group-hover:scale-105 transition-all duration-500">
+                <div className=" p-1.5   bg-amber-50 rounded-lg shadow-2xl transform group-hover:scale-105 transition-all duration-500">
                   <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-lg blur-xl opacity-50" />
                   <Image
                     src={photo.src}

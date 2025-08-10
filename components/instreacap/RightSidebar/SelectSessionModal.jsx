@@ -4,9 +4,10 @@ import { X, Mic } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchSessionDetail } from "@/utils/data";
 
-export default function SelectSessionModal({ isOpen, onClose, eventId }) {
+export default function SelectSessionModal({ isOpen, onClose, eventId, onSessionSelect, selectedSession }) {
   const [isClosing, setIsClosing] = useState(false);
   const [sessions, setSessions] = useState([]);
+  const [selectedSessionId, setSelectedSessionId] = useState(null);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -22,14 +23,33 @@ export default function SelectSessionModal({ isOpen, onClose, eventId }) {
       const data = await fetchSessionDetail(eventId);
       const list = Array.isArray(data?.sessions)
         ? data.sessions.map((s) => ({
+            id: s._id || s.title,
             title: s?.title || "",
             speaker: s?.speakers?.[0]?.name || "",
+            description: s?.description || "",
+            author: s?.speakers?.[0]?.name || "",
           }))
         : [];
       setSessions(list);
+      
+      // Set the currently selected session as default
+      if (selectedSession && list.length > 0) {
+        const currentIndex = list.findIndex(s => s.id === selectedSession.id);
+        setSelectedSessionId(currentIndex >= 0 ? currentIndex : 0);
+      } else if (list.length > 0) {
+        setSelectedSessionId(0);
+      }
     }
     if (isOpen) load();
-  }, [isOpen, eventId]);
+  }, [isOpen, eventId, selectedSession]);
+
+  const handleSessionSelect = (index) => {
+    setSelectedSessionId(index);
+    const selectedSessionData = sessions[index];
+    if (selectedSessionData && onSessionSelect) {
+      onSessionSelect(selectedSessionData);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -76,7 +96,8 @@ export default function SelectSessionModal({ isOpen, onClose, eventId }) {
           {sessions.map((session, index) => (
             <div
               key={index}
-              className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
+              className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50"
+              onClick={() => handleSessionSelect(index)}
             >
               <div>
                 <h3 className="  text-[24px] font-[600] text-blue-600">{session.title}</h3>
@@ -89,7 +110,8 @@ export default function SelectSessionModal({ isOpen, onClose, eventId }) {
                 type="radio"
                 name="session"
                 className="form-radio h-5 w-5 text-blue-600"
-                defaultChecked={index === 0}
+                checked={selectedSessionId === index}
+                onChange={() => handleSessionSelect(index)}
               />
             </div>
           ))}
