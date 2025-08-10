@@ -22,6 +22,8 @@ export default function RightSidebar({
   eventData,
   domain,
 }) {
+
+  console.log(eventData,'daaat  ');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -106,6 +108,8 @@ export default function RightSidebar({
   };
 
   const bannerSrc = toAbsoluteCdnUrl(eventData?.banner) || MabrookBanner;
+  const logoSrc = toAbsoluteCdnUrl(eventData?.logo) || Mabrook;
+  console.log(logoSrc,'logoSrc  ');
   const titleText = eventData?.title || "Mabrook Gulf Toppers 2025";
   const resolveOrigin = () => {
     const raw = domain || (typeof window !== "undefined" ? window.location.origin : "");
@@ -128,7 +132,7 @@ export default function RightSidebar({
       <div 
       className="w-full  overflow-y-auto no-scrollbar">
         {/* Header */}
-        <header className="px-6 pt-[28px] pb-2">
+        <header className="px-6 pt-[28px] pb-[18px]">
           <div
             className={`mx-auto flex items-center ${
               isLogoShow ? "justify-between" : "justify-end"
@@ -138,7 +142,7 @@ export default function RightSidebar({
             <Image
               width={118}
               height={118}
-              src={Mabrook}
+              src={logoSrc}
               alt="mabrook"
               className={`${isLogoShow ? "block" : "hidden"}`}
             />
@@ -189,7 +193,7 @@ style={
     : {}
 }
          className="">
-        <div className="flex flex-col gap-3 px-4 py-4">
+        <div className="flex flex-col gap-3 px-4 ">
           <Image
             width={600}
             height={200}

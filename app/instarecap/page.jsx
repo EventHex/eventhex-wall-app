@@ -65,7 +65,7 @@ export default function CapitalXClarityPage() {
       backgroundPosition: "center center", // Center the background
       backgroundRepeat: "no-repeat", // Prevent repetition for better coverage
       backgroundAttachment: "fixed", // Optional: keeps background fixed while scrolling
-      minHeight: "100vh", // Ensure minimum full viewport height
+      Height: "100vh", // Ensure minimum full viewport height
       width: "100%",
     }}
     className="w-full flex items-center justify-center"
