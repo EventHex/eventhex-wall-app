@@ -130,9 +130,9 @@ export default function RightSidebar({
         eventId={eventId}
       />
       <div 
-      className="w-full  overflow-y-auto no-scrollbar">
+      className="w-full  py-[22px] overflow-y-auto no-scrollbar">
         {/* Header */}
-        <header className="px-6 pt-[27px] pb-[18px]">
+        <header className="px-6  pb-[18px]">
           <div
             className=" w-full flex items-center  relative   justify-between "
          

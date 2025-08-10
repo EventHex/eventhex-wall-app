@@ -284,7 +284,7 @@ export default function RightSidebar({
                 {/* Footer */}
                 <div className="flex items-center justify-center ">
                   <p className="flex items-center justify-center gap-[8px]">
-                    <span className="text-[#989898]text-black text-[12px] font-[400]">
+                    <span className="text-[#989898] text-[12px] font-[400]">
                       Powered by
                     </span>
                     {isInstaSnap ? (

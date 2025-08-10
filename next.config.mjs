@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
+    basePath: '/wall',
   images: {
     remotePatterns: [
       {
@@ -8,6 +10,7 @@ const nextConfig = {
         port: '',
         pathname: '/eventhex/**',
       },
+
     ],
   },
 };
