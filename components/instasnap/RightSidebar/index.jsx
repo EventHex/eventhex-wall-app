@@ -47,7 +47,10 @@ export default function RightSidebar({
 
     return () => {
       document.removeEventListener("fullscreenchange", updateIsFullscreen);
-      document.removeEventListener("webkitfullscreenchange", updateIsFullscreen);
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        updateIsFullscreen
+      );
       document.removeEventListener("mozfullscreenchange", updateIsFullscreen);
       document.removeEventListener("MSFullscreenChange", updateIsFullscreen);
     };
@@ -64,15 +67,21 @@ export default function RightSidebar({
 
       if (isCurrentlyFullscreen) {
         if (document.exitFullscreen) await document.exitFullscreen();
-        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
-        else if (document.mozCancelFullScreen) await document.mozCancelFullScreen();
+        else if (document.webkitExitFullscreen)
+          await document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen)
+          await document.mozCancelFullScreen();
         else if (document.msExitFullscreen) await document.msExitFullscreen();
       } else {
         const rootElement = document.documentElement;
-        if (rootElement.requestFullscreen) await rootElement.requestFullscreen();
-        else if (rootElement.webkitRequestFullscreen) await rootElement.webkitRequestFullscreen();
-        else if (rootElement.mozRequestFullScreen) await rootElement.mozRequestFullScreen();
-        else if (rootElement.msRequestFullscreen) await rootElement.msRequestFullscreen();
+        if (rootElement.requestFullscreen)
+          await rootElement.requestFullscreen();
+        else if (rootElement.webkitRequestFullscreen)
+          await rootElement.webkitRequestFullscreen();
+        else if (rootElement.mozRequestFullScreen)
+          await rootElement.mozRequestFullScreen();
+        else if (rootElement.msRequestFullscreen)
+          await rootElement.msRequestFullscreen();
       }
     } catch (err) {
       // ignore
@@ -97,12 +106,14 @@ export default function RightSidebar({
       year: "numeric",
       timeZone: tz,
     });
-    const time = d.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: tz,
-    }).toLowerCase();
+    const time = d
+      .toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: tz,
+      })
+      .toLowerCase();
     return `${date} | ${time}`;
   };
 
@@ -110,7 +121,8 @@ export default function RightSidebar({
   const logoSrc = toAbsoluteCdnUrl(eventData?.logo) || Mabrook;
   const titleText = eventData?.title || "Mabrook Gulf Toppers 2025";
   const resolveOrigin = () => {
-    const raw = domain || (typeof window !== "undefined" ? window.location.origin : "");
+    const raw =
+      domain || (typeof window !== "undefined" ? window.location.origin : "");
     if (!raw) return "";
     if (/^https?:\/\//i.test(raw)) return raw.replace(/\/$/, "");
     return `https://${raw.replace(/\/$/, "")}`;
@@ -127,41 +139,35 @@ export default function RightSidebar({
         onClose={() => setIsModalOpen(false)}
         eventId={eventId}
       />
-      <div 
-      className="w-full  overflow-y-auto no-scrollbar">
+      <div className="w-full  overflow-y-auto no-scrollbar">
         {/* Header */}
         <header className="px-6 pt-[27px] pb-[18px]">
-          <div
-            className=" w-full flex items-center  relative   justify-between "
-         
-          >
+          <div className=" w-full flex items-center  relative   justify-between ">
             {/* Logo */}
-                         <Image
-        
-               src={logoSrc}
-               // src={Mabrook}
-               alt="mabrook"
-               width={118}
-               height={25}
-               className="w-[118px] h-[25px]"
-             />
+            <Image
+              src={logoSrc}
+              // src={Mabrook}
+              alt="mabrook"
+              width={118}
+              height={25}
+              className="w-[118px] h-[25px]"
+            />
 
             {/* Buttons */}
             <div className="flex w-[40%] justify-end gap-2">
-         
-                <button
-                  // onClick={() => setIsModalOpen(true)}
-                  className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:scale-105 active:scale-95 bg-[#C3C3C396] text-white hover:bg-white hover:text-black"
-                  >
-                  <Settings className="w-[20px]  h-[20px]" />
-                </button>
-              
+              <button
+                // onClick={() => setIsModalOpen(true)}
+                className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:scale-105 active:scale-95 bg-[#191919] text-white hover:bg-white hover:text-black"
+              >
+                <Settings className="w-[20px]  h-[20px]" />
+              </button>
 
               <button
                 onClick={toggleFullscreen}
-                className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:scale-105 active:scale-95 bg-[#C3C3C396] text-white hover:bg-white hover:text-black"
-                 
-                aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:scale-105 active:scale-95 bg-[#191919] text-white hover:bg-white hover:text-black"
+                aria-label={
+                  isFullscreen ? "Exit fullscreen" : "Enter fullscreen"
+                }
                 title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
               >
                 {isFullscreen ? (
@@ -174,110 +180,123 @@ export default function RightSidebar({
           </div>
         </header>
 
-        <div 
-style={
- {
-        backgroundImage: `url(${InstasnapSider.src})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
- }
-}
-         className="">
-        <div className="flex flex-col gap-[32px] px-4 ">
-          <div className="w-full  flex items-center justify-center">
-
-          <Image
-            width={600}
-            height={150}
-            src={bannerSrc}
-            alt="event banner"
-            className="h-[150px] w-[360px] rounded-xl"
-            unoptimized
-            />
-            </div>
-          <div className=" flex flex-col gap-[28px] px-12">
-          <div className="flex flex-col justify-center items-center">
-            <h1
-              className=" text-[18px] text-center font-[700]" >
-              {titleText}
-            </h1>
-            <p
-              className="text-[#B1B1B1]    text-center text-[14px] font-[500]"
-            >
-              {formatDateTime(eventData?.startDate, eventData?.timezone)}
-              {eventData?.venue && (
-                <>
-                  <br />
-                  {eventData.venue}
-                </>
-              )}
-            </p>
-          </div>
-      
-
-        {/* Barcode Card */}
-        <div className="relative">
-          {/* Background blur overlay */}
-          <div className="absolute inset-0 backdrop-blur-lg bg-white/20 rounded-[35px]"></div>
-
-          {/* Original content */}
-          <div className="relative border border-[#C7D0FF96] rounded-[35px] backdrop-blur-md">
-            <div className="flex flex-col gap-[16px] items-center px-[24px] py-[16px]">
-              {/* Barcode */}
-              <div className="px-[24px] py-[26px] bg-white rounded-[24px]">
+        <div className="">
+          <div
+          
+          >
+            <div className="flex flex-col gap-[32px] px-4 ">
+              <div className="w-full  flex justify-center ">
                 <Image
-                  width={146}
-                  height={146}
-                  src={qrSrc}
-                  alt="instasnap qr"
-                  className="w-[146px] h-[146px]"
+                  width={600}
+                  height={150}
+                  src={bannerSrc}
+                  alt="event banner"
+                  className="h-[150px] w-[360x] rounded-xl object-fit"
                   unoptimized
                 />
               </div>
+              <div className=" flex flex-col gap-[26px] px-12">
+                <div className="flex flex-col justify-center items-center">
+                  <h1 className=" text-[18px] text-white text-center font-[700]">
+                    {titleText}
+                  </h1>
+                  <p className="text-[#B1B1B1]  px-[12px] py-[9px]  text-center text-[14px] font-[500]">
+                    {formatDateTime(eventData?.startDate, eventData?.timezone)}
+                    {eventData?.venue && (
+                      <>
+                        <br />
+                        {eventData.venue}
+                      </>
+                    )}
+                  </p>
+                </div>
 
-              {/* Text */}
-              <div className="flex flex-col items-center justify-center">
-                <h1 className="text-[18px] text-[#375DFB] font-[600]">Get Your Photos</h1>
-                <p className="text-[14px] text-center font-[400] text-[#525866]">
-                  Scan to access your personalized photo gallery instantly
-                </p>
-              </div>
+                {/* Barcode Card */}
+                <div className="relative">
+                  {/* Background blur overlay */}
+                  <div className="absolute inset-0 backdrop-blur-lg bg-white/20 rounded-[35px]"></div>
 
-              {/* AI Recognition */}
-              <div className="border border-[#C7D0FF96] rounded-[15px] px-[25px] py-[18px]">
-                <p className="flex items-center justify-center gap-2">
-                  <Image
-                    width={20}
-                    height={20}
-                    src={Glitter}
-                    className="w-[20px]"
-                    alt="glitter"
-                  />
-                  <span className="text-[14px] font-[500] text-[#181fec]">
-                    AI Facial Recognition
-                  </span>
-                </p>
-                <p className="text-[12px] font-[400] text-[#525866]">
-                  Automatically find all your photos with AI
-                </p>
+                  {/* Original content */}
+                  <div className="relative border border-[#C7D0FF96] rounded-[35px] backdrop-blur-md">
+                    <div className="flex flex-col gap-[16px] items-center px-[24px] py-[16px]">
+                      {/* Barcode */}
+                      <div className="px-[24px] py-[26px] bg-white rounded-[24px]">
+                        <Image
+                          width={146}
+                          height={146}
+                          src={qrSrc}
+                          alt="instasnap qr"
+                          className="w-[146px] h-[146px]"
+                          unoptimized
+                        />
+                      </div>
+
+                      {/* Text */}
+                      <div className="flex flex-col items-center justify-center">
+                        <h1 className="text-[18px] text-white font-[600]">
+                          Get Your Photos
+                        </h1>
+                        <p className="text-[14px] text-center font-[400] text-white">
+                          Scan to access your personalized photo gallery
+                          instantly
+                        </p>
+                      </div>
+
+                      {/* AI Recognition */}
+                      <div className="border border-[#C7D0FF96] rounded-[15px] px-[25px] py-[18px] flex items-center justify-center">
+                        <p 
+                        
+                        
+                        
+                        className="flex items-start text-center  text-[14px] font-[500]  text-white">
+                          {/* <Image
+                            width={20}
+                            height={20}
+                            src={Glitter}
+                            className="w-[20px]"
+                            alt="glitter"
+                          /> */}
+                    <span
+                     style={{
+                      background: 'linear-gradient(90deg, #9B7EDE 0%, #E6E6FA 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      fontWeight: '500'
+                    }}
+                    className="flex items-start"
+                    >
+                        <Image
+                            width={20}
+                            height={20}
+                            src={Glitter}
+                            className="w-[20px]"
+                            alt="glitter"
+                          />
+                            AI Facial Recognition  Automatically find all your photos with AI
+                            </span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-center ">
+                  <p className="flex items-center justify-center gap-[8px]">
+                    <span className="text-[#989898]text-black text-[12px] font-[400]">
+                      Powered by
+                    </span>
+                    {isInstaSnap ? (
+                      <Image src={InstasnapLogo} alt=" eventlogo" />
+                    ) : (
+                      <Image src={EventhexFooter} alt="eventhex footer" />
+                    )}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-center ">
-          <p className="flex items-center justify-center gap-[8px]">
-            <span className= "text-[#989898]text-black text-[12px] font-[400]">Powered by</span>
-            {isInstaSnap ? (
-              <Image src={InstasnapLogo} alt=" eventlogo" />
-            ) : (
-              <Image src={EventhexFooter} alt="eventhex footer" />
-            )}
-          </p>
-        </div>
-        </div>
-        </div>
         </div>
       </div>
     </>
