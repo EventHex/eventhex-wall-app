@@ -1,7 +1,6 @@
-
 "use client"
 
-import React,{useState} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Mic, Share2, Maximize2, Settings, Sparkle } from "lucide-react";
 import SpeakersCard from "@/components/instreacap/speakerscard";
 import RightSidebar from "@/components/instreacap/RightSidebar";
@@ -15,13 +14,18 @@ import {
 } from "@/public";
 import { getEventDetails } from '@/lib/data';
 import { fetchSessionDetail } from '@/utils/data';
-import { useEffect, } from "react";
 import Image from "next/image";
+
 export default function CapitalXClarityPage() {
   const [eventId, setEventId] = useState(null);
   const [eventData, setEventData] = useState(null);
   const [articles, setArticles] = useState([]);
   const [domain, setDomain] = useState(null);
+
+  // Auto-scroll refs and variables
+  const containerRef = useRef(null);
+  const scrollSpeed = 1; // pixels per frame
+  const animationRef = useRef();
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -54,61 +58,126 @@ export default function CapitalXClarityPage() {
     }
   }, [eventId]);
 
-  const [isLogoShow, setIsLogoShow] = useState(true)
+  // Auto-scroll functionality
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || articles.length === 0) return;
+
+    let scrollTop = 0;
+    const maxScroll = container.scrollHeight / 2; // Half because we'll duplicate content
+
+    const animate = () => {
+      scrollTop += scrollSpeed;
+      
+      // Reset scroll position when we reach the end of the first set
+      if (scrollTop >= maxScroll) {
+        scrollTop = 0;
+      }
+      
+      container.scrollTop = scrollTop;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    // Pause scrolling on hover
+    const handleMouseEnter = () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [articles]);
+
+  const [isLogoShow, setIsLogoShow] = useState(true);
   const headerTitle = articles?.[0]?.title || "Capital X Clarity: A Founder's roadmap to fund raising and";
   const headerSpeaker = articles?.[0]?.author || "Safari Sanders Dennyes";
-  return (
-    <div
-    style={{
-      backgroundImage: `url(${BackgroundImage.src})`,
-      backgroundSize: "cover", // This will cover the entire container
-      backgroundPosition: "center center", // Center the background
-      backgroundRepeat: "no-repeat", // Prevent repetition for better coverage
-      backgroundAttachment: "fixed", // Optional: keeps background fixed while scrolling
-      Height: "100vh", // Ensure minimum full viewport height
-      width: "100%",
-    }}
-    className="w-full flex items-center justify-center"
-  >
-      {/* Header */}
 
-      <section className="w-full flex min-h-screen">
-        {/* left */}
-        <div className=" w-[70%]  border border-l-0 border-[#D4D4D4] border-t-0 border-b-0 border-r px-2 overflow-y-auto no-scrollbar">
-          <header className="bg-white border-b sticky z-10 top-0  mb-5 border-[#D4D4D4] pb-5 px-10 ">
-            <div className=" mx-auto flex justify-between pt-[28px] items-center">
-              <div className="flex flex-col  gap-3">
-                <h1 className="text-[24px] font-[600] text-blue-600">{headerTitle}</h1>
-                <p className="flex gap">
-                  <Mic />
-                  <span className="font-[500] text-[16px]">{headerSpeaker}</span>
-                </p>
+  // Create duplicated articles array for infinite scrolling
+  const duplicatedArticles = [...articles, ...articles];
+
+  return (
+    <>
+      <style jsx>{`
+        .auto-scroll-container::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+      <div
+        style={{
+          backgroundImage: `url(${BackgroundImage.src})`,
+          backgroundSize: "cover", // This will cover the entire container
+          backgroundPosition: "center center", // Center the background
+          backgroundRepeat: "no-repeat", // Prevent repetition for better coverage
+          backgroundAttachment: "fixed", // Optional: keeps background fixed while scrolling
+          Height: "100vh", // Ensure minimum full viewport height
+          width: "100%",
+        }}
+        className="w-full flex items-center justify-center"
+      >
+        {/* Header */}
+
+        <section className="w-full flex min-h-screen">
+          {/* left */}
+          <div className=" w-[70%]  border border-l-0 border-[#D4D4D4] border-t-0 border-b-0 border-r px-2 overflow-y-auto no-scrollbar">
+            <header className="bg-white border-b sticky z-10 top-0  mb-5 border-[#D4D4D4] pb-5 px-10 ">
+              <div className=" mx-auto flex justify-between pt-[28px] items-center">
+                <div className="flex flex-col  gap-3">
+                  <h1 className="text-[24px] font-[600] text-blue-600">{headerTitle}</h1>
+                  <p className="flex gap">
+                    <Mic />
+                    <span className="font-[500] text-[16px]">{headerSpeaker}</span>
+                  </p>
+                </div>
               </div>
+            </header>
+            {/* card loop with auto-scroll */}
+            <div 
+              ref={containerRef}
+              className="auto-scroll-container flex flex-col max-h-[80vh] px-10 gap-[25px] overflow-y-auto"
+              style={{ 
+                scrollbarWidth: 'none', 
+                msOverflowStyle: 'none',
+                scrollBehavior: 'auto'
+              }}
+            >
+              {duplicatedArticles.map((article, index) => (
+                <SpeakersCard 
+                  key={`${article.id}-${index}`} 
+                  article={article} 
+                />
+              ))}
             </div>
-          </header>
-          {/* card loop */}
-          <div className="flex flex-col   px-10 gap-[25px]">
-            {articles.map((article) => (
-              <SpeakersCard key={article.id} article={article} />
-            ))}
           </div>
-        </div>
-        {/* right  */}
-        <div 
-        
-        className="w-[30%]">
-        {domain && eventId && eventData && (
-          <RightSidebar
-            isLogoShow={isLogoShow}
-            mode="instarecap"
-            Glitter={InstaRecapGlitter}
-            eventId={eventId}
-            eventData={eventData}
-            domain={domain}
-          />
-        )}
-        </div>
-      </section>
-    </div>
+          {/* right  */}
+          <div className="w-[30%]">
+            {domain && eventId && eventData && (
+              <RightSidebar
+                isLogoShow={isLogoShow}
+                mode="instarecap"
+                Glitter={InstaRecapGlitter}
+                eventId={eventId}
+                eventData={eventData}
+                domain={domain}
+              />
+            )}
+          </div>
+        </section>
+      </div>
+    </>
   );
 }

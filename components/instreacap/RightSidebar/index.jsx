@@ -132,23 +132,24 @@ export default function RightSidebar({
       <div 
       className="w-full  overflow-y-auto no-scrollbar">
         {/* Header */}
-        <header className="px-6 pt-[28px] pb-[18px]">
+        <header className="px-6 pt-[27px] pb-[18px]">
           <div
-            className={`mx-auto flex items-center ${
-              isLogoShow ? "justify-between" : "justify-end"
-            }`}
+            className=" w-full flex items-center  relative   justify-between "
+         
           >
             {/* Logo */}
-            <Image
-              width={118}
-              height={118}
-              src={logoSrc}
-              alt="mabrook"
-              className={`${isLogoShow ? "block" : "hidden"}`}
-            />
+                         <Image
+        
+               src={logoSrc}
+               // src={Mabrook}
+               alt="mabrook"
+               width={118}
+               height={25}
+               className="w-[118px] h-[25px]"
+             />
 
             {/* Buttons */}
-            <div className="flex gap-2">
+            <div className="flex w-[40%] justify-end gap-2">
               {isLogoShow && (
                 <button
                   onClick={() => setIsModalOpen(true)}
@@ -193,22 +194,22 @@ style={
     : {}
 }
          className="">
-        <div className="flex flex-col gap-3 px-4 ">
+        <div className="flex flex-col gap-[32px] px-4 ">
+          <div className="w-full  flex items-center justify-center">
+
           <Image
             width={600}
-            height={200}
+            height={150}
             src={bannerSrc}
             alt="event banner"
-            className="w-full rounded-xl"
+            className="h-[150px] w-[360px] rounded-xl"
             unoptimized
-          />
-          <div className=" flex flex-col gap-5 px-12">
+            />
+            </div>
+          <div className=" flex flex-col gap-[28px] px-12">
           <div className="flex flex-col justify-center items-center">
             <h1
-              className={`   ${
-                isInstaSnap ? "text-white" : ""
-              } text-[18px] font-[700]`}
-            >
+              className=" text-[18px] text-center font-[700]" >
               {titleText}
             </h1>
             <p
