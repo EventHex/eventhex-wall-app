@@ -13,52 +13,50 @@ import {
   EventhexFooter,
   InstaRecapGlitter,
 } from "@/public";
+import { getEventDetails } from '@/lib/data';
+import { fetchSessionDetail } from '@/utils/data';
+import { useEffect, } from "react";
 import Image from "next/image";
 export default function CapitalXClarityPage() {
-  const articles = [
-    {
-      id: 1,
-      title: "Cross-Border Payment Innovations Creating Key Challenges",
-      content:
-        "EventHex stands out by tackling two key challenges that traditional event management often struggles with: creating personalized experiences and ensuring attendee retention. This platform is built",
-      tags: ["#AiGen", "#Prediction", "#Strategy"],
-      author: "Safari Sanders Demyès",
-    },
-    {
-      id: 2,
-      title: "Cross-Border Payment Innovations Creating Key Challenges",
-      content:
-        "EventHex stands out by tackling two key challenges that traditional event management often struggles with: creating personalized experiences and ensuring attendee retention. This platform is built",
-      tags: ["#AiGen", "#Prediction", "#Strategy"],
-      author: null,
-    },
-    {
-      id: 3,
-      title: "Cross-Border Payment Innovations Creating Key Challenges",
-      content:
-        "EventHex stands out by tackling two key challenges that traditional event management often struggles with: creating personalized experiences and ensuring attendee retention. This platform is built",
-      tags: ["#AiGen", "#Prediction", "#Strategy"],
-      author: null,
-    },
-    {
-      id: 4,
-      title: "Cross-Border Payment Innovations Creating Key Challenges",
-      content:
-        "EventHex stands out by tackling two key challenges that traditional event management often struggles with: creating personalized experiences and ensuring attendee retention. This platform is built",
-      tags: ["#AiGen", "#Prediction", "#Strategy"],
-      author: null,
-    },
-    {
-      id: 5,
-      title: "Cross-Border Payment Innovations Creating Key Challenges",
-      content:
-        "EventHex stands out by tackling two key challenges that traditional event management often struggles with: creating personalized experiences and ensuring attendee retention. This platform is built",
-      tags: ["#AiGen", "#Prediction", "#Strategy"],
-      author: null,
-    },
-  ];
+  const [eventId, setEventId] = useState(null);
+  const [eventData, setEventData] = useState(null);
+  const [articles, setArticles] = useState([]);
+  const [domain, setDomain] = useState(null);
+
+  useEffect(() => {
+    const fetchEventData = async () => {
+      const eventData = await getEventDetails();
+      setEventId(eventData.domainData.event._id);
+      setEventData(eventData.domainData.event);
+      setDomain(eventData.domainData.domain);
+    }
+    fetchEventData();
+  }, []);
+
+  useEffect(() => {
+    const fetchSessionDetails = async () => {
+      const sessionDetail = await fetchSessionDetail(eventId);
+      console.log(sessionDetail, "sessionDetail from instarecap page");
+      // Transform API response to match existing card design props
+      const dynamicArticles = Array.isArray(sessionDetail?.sessions)
+        ? sessionDetail.sessions.map((s, index) => ({
+            id: s._id || index,
+            title: s.title || "",
+            content: s.description || "",
+            tags: ["#AiGen", "#Prediction", "#Strategy"],
+            author: s.speakers?.[0]?.name || null,
+          }))
+        : [];
+      setArticles(dynamicArticles);
+    }
+    if (eventId) {
+      fetchSessionDetails();
+    }
+  }, [eventId]);
 
   const [isLogoShow, setIsLogoShow] = useState(true)
+  const headerTitle = articles?.[0]?.title || "Capital X Clarity: A Founder's roadmap to fund raising and";
+  const headerSpeaker = articles?.[0]?.author || "Safari Sanders Dennyes";
   return (
     <div
     style={{
@@ -80,15 +78,10 @@ export default function CapitalXClarityPage() {
           <header className="bg-white border-b sticky z-10 top-0  mb-5 border-[#D4D4D4] pb-5 px-10 ">
             <div className=" mx-auto flex justify-between pt-[28px] items-center">
               <div className="flex flex-col  gap-3">
-                <h1 className="text-[24px] font-[600] text-blue-600">
-                  Capital X Clarity: A Founder's roadmap to fund raising and
-                  scaling
-                </h1>
+                <h1 className="text-[24px] font-[600] text-blue-600">{headerTitle}</h1>
                 <p className="flex gap">
                   <Mic />
-                  <span className="font-[500] text-[16px]">
-                    Safari Sanders Dennyes
-                  </span>
+                  <span className="font-[500] text-[16px]">{headerSpeaker}</span>
                 </p>
               </div>
             </div>
@@ -104,7 +97,16 @@ export default function CapitalXClarityPage() {
         <div 
         
         className="w-[30%]">
-        <RightSidebar isLogoShow={isLogoShow}  mode="instarecap" Glitter={InstaRecapGlitter}/>
+        {domain && eventId && eventData && (
+          <RightSidebar
+            isLogoShow={isLogoShow}
+            mode="instarecap"
+            Glitter={InstaRecapGlitter}
+            eventId={eventId}
+            eventData={eventData}
+            domain={domain}
+          />
+        )}
         </div>
       </section>
     </div>
