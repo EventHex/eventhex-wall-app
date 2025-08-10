@@ -1,4 +1,8 @@
-import { get } from "@/utils/functions";
+import { get, put } from "@/utils/functions";
+
+const AZURE_API_BASE_URL =
+  process.env.NEXT_PUBLIC_INSTARECAP_API_BASE_URL ??
+  "https://instarecap-app.ambitiousforest-1ab41110.centralindia.azurecontainerapps.io/api/";
 
 /**
  * fetchWallFamePhotos
@@ -34,3 +38,29 @@ export async function fetchWallFamePhotos() {
   }
 }
 
+// Resolve event by hostname (with fallbacks)
+export async function getEventByDomain(domain = null) {
+  const fallbackDomains = [
+   
+    "localhost:3000",
+
+  ];
+
+  let hostname = domain ?? null;
+  if (typeof window !== "undefined") {
+    hostname = window.location.hostname;
+    console.log("hostnamewwwwww", hostname);
+  }
+  if (!hostname || fallbackDomains.includes(hostname)) {
+    hostname = "testing.eventhex.ai";
+  }
+
+  const response = await get("/auth/domain-event", { params: { domain: hostname } });
+  return response;
+}
+
+export async function getEventDetails(domain = null) {
+  const eventByDomain = await getEventByDomain(domain);
+  console.log("eventByDomain", eventByDomain);
+  return eventByDomain;
+}

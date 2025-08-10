@@ -20,10 +20,13 @@ export default function RightSidebar({
   Glitter,
   isLogoShow,
   isInstaSnap,
-
+  eventId,
+  eventData,
+  domain,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
 
   const isInstaRecap = !isInstaSnap; // Opposite of InstaSnap
 
@@ -78,11 +81,56 @@ export default function RightSidebar({
     }
   };
 
+  const BASE_CDN = "https://event-manager.syd1.digitaloceanspaces.com/";
+  const toAbsoluteCdnUrl = (path) => {
+    if (!path || typeof path !== "string") return null;
+    if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
+    const base = BASE_CDN.replace(/\/+$/, "");
+    const key = path.replace(/^\/+/, "");
+    return `${base}/${key}`;
+  };
+
+  const formatDateTime = (iso, tz = "Asia/Kolkata") => {
+    if (!iso) return null;
+    const d = new Date(iso);
+    const date = d.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      timeZone: tz,
+    });
+    const time = d.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: tz,
+    }).toLowerCase();
+    return `${date} | ${time}`;
+  };
+
+  const bannerSrc = toAbsoluteCdnUrl(eventData?.banner) || MabrookBanner;
+  const titleText = eventData?.title || "Mabrook Gulf Toppers 2025";
+  const subText = `${formatDateTime(eventData?.startDate, eventData?.timezone)}${
+    eventData?.venue ? `\n${eventData.venue}` : ""
+  }`;
+
+  const resolveOrigin = () => {
+    const raw = domain || (typeof window !== "undefined" ? window.location.origin : "");
+    if (!raw) return "";
+    if (/^https?:\/\//i.test(raw)) return raw.replace(/\/$/, "");
+    return `https://${raw.replace(/\/$/, "")}`;
+  };
+  const qrTarget = `${resolveOrigin()}/instasnap`;
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=146x146&data=${encodeURIComponent(
+    qrTarget
+  )}`;
+
   return (
     <>
       <SelectSessionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        eventId={eventId}
       />
 
       {/* Main Container with conditional background */}
@@ -132,24 +180,27 @@ export default function RightSidebar({
                   <Image
                     width={600}
                     height={200}
-                    src={MabrookBanner}
-                    alt="mabrook banner"
+                    src={bannerSrc}
+                    alt="event banner"
                     className="w-full rounded-xl shadow-lg"
+                    unoptimized
                   />
 
                   {/* Event Details */}
                   <div className="flex flex-col justify-center items-center">
-                    <h1 className="text-[18px] font-[700] text-white">
-                      Mabrook Gulf Toppers 2025
-                    </h1>
+                    <h1 className="text-[18px] font-[700] text-white">{titleText}</h1>
                     <p
                       className="text-center text-[14px] font-[500] 
                        text-[#B1B1B1]" 
                   
                     >
-                      12 August 2025 | 9:00 am
-                      <br />
-                      Royal Convention Centre, Calicut
+                      {formatDateTime(eventData?.startDate, eventData?.timezone)}
+                      {eventData?.venue && (
+                        <>
+                          <br />
+                          {eventData.venue}
+                        </>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -165,9 +216,10 @@ export default function RightSidebar({
                           <Image
                             width={146}
                             height={146}
-                            src={Barcode}
-                            alt="barcode"
-                            className="w-[146px]"
+                            src={qrSrc}
+                            alt="instasnap qr"
+                            className="w-[146px] h-[146px]"
+                            unoptimized
                           />
                         </div>
 

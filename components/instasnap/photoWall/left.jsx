@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchWallFamePhotos } from "@/utils/data";
 import { WallImage } from "@/public";
 
-export const PhotoFlow = () => {
+export const PhotoFlow = ({ eventId, eventData }  ) => {
   const [apiPhotos, setApiPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -14,7 +14,7 @@ export const PhotoFlow = () => {
       try {
         setIsLoading(true);
         // Use centralized data util. See usage note in `@/utils/data`.
-        const photosFromApi = await fetchWallFamePhotos();
+        const photosFromApi = await fetchWallFamePhotos(eventId, eventData);
         setApiPhotos(photosFromApi);
       } catch (error) {
         console.error("Failed to fetch wall-fame images", error);
