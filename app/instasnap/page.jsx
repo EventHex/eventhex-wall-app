@@ -3,6 +3,7 @@
 import { HighlightImage, Instasnapbackground, InstaSnapGlitter, RetreivedImage, UploadImage } from "@/public";
 import { PhotoFlow } from "../../components/instasnap/photoWall/left";
 import RightSidebar from "@/components/instasnap/RightSidebar";
+// import RightSidebar from "@/components/instreacap/RightSidebar";
 import { getEventDetails } from "@/lib/data";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -40,16 +41,15 @@ const Index = (props) => {
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
-        minHeight: "100vh",
-        height: "auto",
+        height: "100vh",
         width: "100%",
         position: "relative",
       }}
-      className="min-h-screen w-full bg-background flex"
+      className="h-screen w-full bg-background flex"
     >
       {/* Main photo display area - no content, just flowing photos */}
-      <div className="w-[70%]">
-        <header className="w-full flex items-center pl-[58px] h-[100px] border-b border-[#D9D9D9]" >
+      <div className="w-[70%] flex flex-col">
+        <header className="w-full flex items-center pl-[58px] h-[100px] border-b border-[#D9D9D9] flex-shrink-0" >
           <div className="flex w-full gap-[36px]">
             <div className="flex gap-2">
               <Image src={UploadImage} alt="upload" width={45} height={45} />
@@ -97,16 +97,18 @@ const Index = (props) => {
           </div>
         </header>
         {eventId && eventData && (
-          <div className="w-full h-full">
+          <div className="w-full flex-1 overflow-hidden">
 
             <PhotoFlow eventId={eventId} eventData={eventData} />
+
+            {/* photos looping  */}
           </div>
         )}
       </div>
 
       {/* Right sidebar */}
       {/* <EventSidebar /> */}
-      <div className="w-[30%]">
+      <div className="w-[30%] flex flex-col">
         {domain && eventId && eventData && (
           <RightSidebar
             Glitter={InstaSnapGlitter}

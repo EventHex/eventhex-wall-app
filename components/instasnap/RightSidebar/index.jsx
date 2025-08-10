@@ -139,9 +139,9 @@ export default function RightSidebar({
         onClose={() => setIsModalOpen(false)}
         eventId={eventId}
       />
-      <div className="w-full  overflow-y-auto no-scrollbar">
+      <div className="w-full h-full py-[24px] overflow-y-auto no-scrollbar">
         {/* Header */}
-        <header className="px-6 pt-[27px] pb-[18px]">
+        <header className="px-6  pb-[18px]">
           <div className=" w-full flex items-center  relative   justify-between ">
             {/* Logo */}
             <Image
@@ -184,7 +184,7 @@ export default function RightSidebar({
           <div
           
           >
-            <div className="flex flex-col gap-[32px] px-4 ">
+            <div className="flex flex-col gap-[22px] px-4 ">
               <div className="w-full  flex justify-center ">
                 <Image
                   width={600}
@@ -195,9 +195,9 @@ export default function RightSidebar({
                   unoptimized
                 />
               </div>
-              <div className=" flex flex-col gap-[26px] px-12">
+              <div className=" flex flex-col gap-[24px] px-12">
                 <div className="flex flex-col justify-center items-center">
-                  <h1 className=" text-[18px] text-white text-center font-[700]">
+                  <h1 className=" text-[18px] text-white text-center leading-[20px] font-[700]">
                     {titleText}
                   </h1>
                   <p className="text-[#B1B1B1]  px-[12px] py-[9px]  text-center text-[14px] font-[500]">
@@ -218,7 +218,7 @@ export default function RightSidebar({
 
                   {/* Original content */}
                   <div className="relative border border-[#C7D0FF96] rounded-[35px] backdrop-blur-md">
-                    <div className="flex flex-col gap-[16px] items-center px-[24px] py-[16px]">
+                    <div className="flex flex-col gap-[14px] items-center px-[24px] py-[16px]">
                       {/* Barcode */}
                       <div className="px-[24px] py-[26px] bg-white rounded-[24px]">
                         <Image
@@ -236,7 +236,7 @@ export default function RightSidebar({
                         <h1 className="text-[18px] text-white font-[600]">
                           Get Your Photos
                         </h1>
-                        <p className="text-[14px] text-center font-[400] text-white">
+                        <p className="text-[14px] text-center font-[400] text-white p-0 m-0">
                           Scan to access your personalized photo gallery
                           instantly
                         </p>

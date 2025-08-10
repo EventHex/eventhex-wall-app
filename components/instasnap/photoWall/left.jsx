@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchWallFamePhotos } from "@/utils/data";
 import { WallImage } from "@/public";
 
-export const PhotoFlow = ({ eventId, eventData }  ) => {
+export const PhotoFlow = ({ eventId, eventData }) => {
   const [apiPhotos, setApiPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,117 +37,78 @@ export const PhotoFlow = ({ eventId, eventData }  ) => {
   // Create a shuffled array of photos to avoid repetition
   const shuffledPhotos = useMemo(() => {
     if (photos.length === 0) return [];
-    
-    // Create multiple copies of photos array and shuffle each copy
-    const copies = [];
-    const totalPhotosNeeded = 150; // 75 left + 75 right
-    
-    for (let i = 0; i < Math.ceil(totalPhotosNeeded / photos.length); i++) {
-      const shuffled = [...photos].sort(() => Math.random() - 0.5);
-      copies.push(...shuffled);
-    }
-    
-    return copies.slice(0, totalPhotosNeeded);
+
+    // Just shuffle the original photos once, no duplication
+    return [...photos].sort(() => Math.random() - 0.5);
   }, [photos]);
 
-  console.log(`Animation config - float-left/right duration: 30-60s | photos: ${photos.length} | loading: ${isLoading}`);
+  console.log(
+    `Animation config - float-left/right duration: 30-60s | photos: ${photos.length} | loading: ${isLoading}`
+  );
+
+  // Debug: Check if animations are working
+  useEffect(() => {
+    if (shuffledPhotos.length > 0) {
+      console.log(`PhotoWall Debug: ${shuffledPhotos.length} photos positioned`);
+      console.log('Animation classes applied:', document.querySelectorAll('.animate-float-left').length);
+    }
+  }, [shuffledPhotos]);
 
   if (photos.length === 0) {
     return (
-      <div className="relative w-full h-full overflow-hidden" />
+      <div className="relative w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 mb-2">No photos available</p>
+          {isLoading && <p className="text-blue-500">Loading photos...</p>}
+          <p className="text-sm text-gray-400">Photos: {photos.length} | API Photos: {apiPhotos.length}</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="w-full   h-full">
-      <div className="relative w-full h-full overflow-hidden ">
-        {/* Enhanced background effects */}
-        <div className="absolute inset-0">
-          {/* Floating particles */}
-          {[...Array(60)].map((_, i) => (
-            <div
-              key={`particle-${i}`}
-              className="absolute w-1 h-1  rounded-full animate-pulse"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 4}s`,
-                animationDuration: `${3 + Math.random() * 4}s`,
-              }}
+    <div className="relative w-full h-full overflow-hidden">
+      {shuffledPhotos.map((photo, index) => {
+        // Randomly decide if image floats left-to-right or right-to-left
+        const isLeftToRight = Math.random() < 0.5;
+        const animationClass = isLeftToRight ? 'animate-float-left' : 'animate-float-right';
+        
+        // Position images on opposite sides based on animation direction
+        let leftPosition, topPosition;
+        if (isLeftToRight) {
+          // Left side images (10% to 40%)
+          leftPosition = 10 + (index % 3) * 10;
+        } else {
+          // Right side images (60% to 90%)
+          leftPosition = 60 + (index % 3) * 10;
+        }
+        
+        // Distribute top positions evenly
+        topPosition = 5 + (index % 7) * 13;
+        const animationDelay = index * 1.5; // Staggered delays
+        
+        return (
+          <div
+            key={`${photo.src}-${index}`}
+            className={`absolute ${animationClass}`}
+            style={{
+              left: `${leftPosition}%`,
+              top: `${topPosition}%`,
+              animationDelay: `${animationDelay}s`,
+              zIndex: index
+            }}
+          >
+            <Image
+              src={photo.src}
+              alt={photo.alt || "Wall photo"}
+              width={156}
+              height={136}
+              className="w-[160px] h-[130px] object-cover rounded-sm shadow-lg"
+              unoptimized
             />
-          ))}
-          
-          {/* Light rays effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent transform rotate-12 animate-shimmer" />
-        </div>
-
-        {/* Photos flowing LEFT TO RIGHT */}
-        {[...Array(75)].map((_, i) => {
-          const photo = shuffledPhotos[i];
-          if (!photo) return null;
-          
-          const rotation = (Math.random() - 0.5) * 120; // -60 to +60 degrees for dramatic tilt
-          const horizontalOffset = (Math.random() - 0.5) * 100; // Random horizontal slide -50px to +50px
-          const speed = 30 + Math.random() * 30; // Random speed between 30s and 60s
-          return (
-            <div
-              key={`left-${i}`}
-              className="absolute animate-float-left opacity-90 hover:opacity-100 transition-opacity duration-300"
-              style={{
-                top: `${Math.random() * 80 + 5}%`,
-                animationDelay: `${Math.random() * -40}s`,
-                animationDuration: `${speed}s`,
-                animationTimingFunction: 'linear',
-                animationIterationCount: 'infinite',
-                zIndex: 10 + i,
-                transform: `rotate(${rotation}deg)`,
-              }}
-            >
-             
-            </div>
-          );
-        })}
-
-        {/* Photos flowing RIGHT TO LEFT */}
-        {[...Array(75)].map((_, i) => {
-          const photo = shuffledPhotos[i + 75]; // Use different photos for right flow
-          if (!photo) return null;
-          
-          const rotation = (Math.random() - 0.5) * 120; // -60 to +60 degrees for dramatic tilt
-          const horizontalOffset = (Math.random() - 0.5) * 100; // Random horizontal slide -50px to +50px
-          const speed = 30 + Math.random() * 30; // Random speed between 30s and 60s
-          return (
-            <div
-              key={`right-${i}`}
-              className="absolute animate-float-right opacity-90 hover:opacity-100 transition-opacity duration-300"
-              style={{
-                top: `${Math.random() * 80 + 5}%`,
-                animationDelay: `${Math.random() * -40}s`,
-                animationDuration: `${speed}s`,
-                animationTimingFunction: 'linear',
-                animationIterationCount: 'infinite',
-                zIndex: 15 + i,
-                transform: `rotate(${rotation}deg)`,
-              }}
-            >
-              <div className="relative bg-amber-200 group">
-                {/* Small white album frame */}
-                <div className=" p-1.5   bg-amber-50 rounded-lg shadow-2xl transform group-hover:scale-105 transition-all duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-lg blur-xl opacity-50" />
-                  <Image
-                    src={photo.src}
-                    alt={photo.alt}
-                    width={192}
-                    height={128}
-                    className="relative w-48 h-32 object-cover rounded-sm"
-                    unoptimized
-                  />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
