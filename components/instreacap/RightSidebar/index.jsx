@@ -195,14 +195,14 @@ style={
 }
          className="">
         <div className="flex flex-col gap-[32px] px-4 ">
-          <div className="w-full  flex items-center justify-center">
+          <div className="w-full  flex justify-center ">
 
           <Image
             width={600}
             height={150}
             src={bannerSrc}
             alt="event banner"
-            className="h-[150px] w-[360px] rounded-xl"
+            className="h-[150px] w-[360x] rounded-xl object-fit"
             unoptimized
             />
             </div>
