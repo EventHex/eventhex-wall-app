@@ -11,7 +11,7 @@ import InstasnapGlitter from "../public/instasnap/image/glliter.svg"
 import Instasnapbackground from "../public/instasnap/image/instasnapbackground.svg" 
 import InstasnapLogo from "../public/instasnap/image/instasnapFulllogo.svg"
 import InstasnapSider from "../public/instasnap/image/instasnpasider.svg"
-import WallImage from "../public/instasnap/image/maa.jpg"
+import WallImage from "../public/instasnap/image/imageplaceholder.png"
 export { Mabrook,
     MabrookBanner,
     Barcode,

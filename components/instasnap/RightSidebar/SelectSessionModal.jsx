@@ -1,33 +1,12 @@
 "use client";
 
 import { X, Mic } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { fetchSessionDetail } from "@/utils/data";
 
-const sessions = [
-  {
-    title: "Capital X Clarity: A Founder's roadmap to fund raising and scaling",
-    speaker: "Safari Sanders Dennys",
-  },
-  {
-    title: "Capital X Clarity: A Founder's roadmap to fund raising and scaling",
-    speaker: "Safari Sanders Dennys",
-  },
-  {
-    title: "Capital X Clarity: A Founder's roadmap to fund raising and scaling",
-    speaker: "Safari Sanders Dennys",
-  },
-  {
-    title: "Capital X Clarity: A Founder's roadmap to fund raising and scaling",
-    speaker: "Safari Sanders Dennys",
-  },
-  {
-    title: "Capital X Clarity: A Founder's roadmap to fund raising and scaling",
-    speaker: "Safari Sanders Dennys",
-  },
-];
-
-export default function SelectSessionModal({ isOpen, onClose }) {
+export default function SelectSessionModal({ isOpen, onClose, eventId }) {
   const [isClosing, setIsClosing] = useState(false);
+  const [sessions, setSessions] = useState([]);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -36,6 +15,21 @@ export default function SelectSessionModal({ isOpen, onClose }) {
       onClose();
     }, 200);
   };
+
+  useEffect(() => {
+    async function load() {
+      if (!eventId) return;
+      const data = await fetchSessionDetail(eventId);
+      const list = Array.isArray(data?.sessions)
+        ? data.sessions.map((s) => ({
+            title: s?.title || "",
+            speaker: s?.speakers?.[0]?.name || "",
+          }))
+        : [];
+      setSessions(list);
+    }
+    if (isOpen) load();
+  }, [isOpen, eventId]);
 
   if (!isOpen) return null;
 
