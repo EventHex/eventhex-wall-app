@@ -60,7 +60,9 @@ export default function SelectSessionModal({ isOpen, onClose, eventId, onSession
           isClosing ? 'animate-modal-slide-out' : 'animate-modal-slide'
         }`}
         style={{
-          transformOrigin: 'top right',
+          borderRadius: '34px',
+          height: '80vh',
+          transformOrigin: 'center',
           animation: isClosing ? 'modalSlideOut 0.2s ease-in forwards' : 'modalSlide 0.3s ease-out'
         }}
       >
@@ -85,6 +87,14 @@ export default function SelectSessionModal({ isOpen, onClose, eventId, onSession
               transform: scale(0.8) translate(30%, -30%);
             }
           }
+          
+          .scrollbar-hide {
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;  /* Safari and Chrome */
+          }
         `}</style>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-[16px] font-[400] text-gray-800">Select Sessions</h2>
@@ -92,7 +102,7 @@ export default function SelectSessionModal({ isOpen, onClose, eventId, onSession
             <X size={24} />
           </button>
         </div>
-        <div>
+        <div className="overflow-y-auto max-h-[calc(80vh-120px)] pr-2 scrollbar-hide">
           {sessions.map((session, index) => (
             <div
               key={index}
