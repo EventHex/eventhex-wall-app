@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import SelectSessionModal from "./SelectSessionModal";
-import { Maximize2, Minimize2, Settings } from "lucide-react";
+import { Maximize2, Minimize2, Settings, Sparkle } from "lucide-react";
+import axios from "axios";
 import {
   Mabrook,
   MabrookBanner,
@@ -28,8 +29,59 @@ export default function RightSidebar({
   console.log(eventData,'daaat  ');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [liveTakeaways, setLiveTakeaways] = useState(null);
+  const [isLoadingTakeaways, setIsLoadingTakeaways] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const isInstaRecap = !isInstaSnap; // Opposite of InstaSnap
+
+  // Function to fetch live takeaways for a session
+  const fetchLiveTakeaways = async (sessionId) => {
+    if (!eventId || !sessionId) return;
+    
+    setIsLoadingTakeaways(true);
+    try {
+      const base = process.env.NEXT_PUBLIC_INSTARECAP_API || 'https://instarecap-app.ambitiousforest-1ab41110.centralindia.azurecontainerapps.io/api';
+      const response = await axios.get(`${base}/live/event/${eventId}/session/${sessionId}/takeaways`);
+      
+      if (response.data.success && response.data.data) {
+        setLiveTakeaways(response.data.data);
+        setLastUpdated(new Date());
+      } else {
+        setLiveTakeaways(null);
+        setLastUpdated(null);
+      }
+    } catch (error) {
+      console.error('Error fetching live takeaways:', error);
+      setLiveTakeaways(null);
+    } finally {
+      setIsLoadingTakeaways(false);
+    }
+  };
+
+  // Fetch takeaways when selectedSession changes
+  useEffect(() => {
+    if (selectedSession?.id) {
+      fetchLiveTakeaways(selectedSession.id);
+    } else {
+      setLiveTakeaways(null);
+    }
+  }, [selectedSession, eventId]);
+
+  // Set up periodic refresh of live takeaways
+  useEffect(() => {
+    if (!selectedSession?.id || !eventId) return;
+
+    // Initial fetch
+    fetchLiveTakeaways(selectedSession.id);
+
+    // Set up interval to refresh every 2 minutes
+    const interval = setInterval(() => {
+      fetchLiveTakeaways(selectedSession.id);
+    }, 120000); // 2 minutes
+
+    return () => clearInterval(interval);
+  }, [selectedSession, eventId]);
 
   useEffect(() => {
     const updateIsFullscreen = () => {
@@ -279,6 +331,110 @@ style={
             </div>
           </div>
         </div>
+
+        {/* Live Takeaways Section */}
+        {selectedSession ? (
+          <div className="relative">
+            {/* Background blur overlay */}
+            <div className="absolute inset-0 backdrop-blur-lg bg-white/20 rounded-[35px]"></div>
+            
+            {/* Content */}
+            <div className="relative border border-[#C7D0FF96] rounded-[35px] backdrop-blur-md p-6">
+              {/* Session Info */}
+              <div className="mb-4 p-3 bg-blue-50/80 rounded-xl border border-blue-200/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-[12px] font-[600] text-blue-700 uppercase tracking-wide">Current Session</span>
+                </div>
+                <h4 className="text-[14px] font-[600] text-blue-800 mb-1">{selectedSession.title}</h4>
+                {selectedSession.speaker && (
+                  <p className="text-[12px] text-blue-600">{selectedSession.speaker}</p>
+                )}
+              </div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Sparkle className="w-5 h-5 text-emerald-600" />
+                  <h3 className="text-[18px] font-[600] text-emerald-700">Live Takeaways</h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isLoadingTakeaways && (
+                    <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                  )}
+                  <button
+                    onClick={() => selectedSession?.id && fetchLiveTakeaways(selectedSession.id)}
+                    disabled={isLoadingTakeaways}
+                    className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 transition-colors disabled:opacity-50"
+                    title="Refresh takeaways"
+                  >
+                    <svg className="w-3 h-3 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              {liveTakeaways && liveTakeaways.takeaways && liveTakeaways.takeaways.length > 0 ? (
+                <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                  {liveTakeaways.takeaways.map((takeaway, idx) => (
+                    <div key={idx} className="bg-white/80 rounded-xl p-3 border border-emerald-200/50">
+                      <h4 className="text-[14px] font-[600] text-emerald-800 mb-2">{takeaway.heading}</h4>
+                      <p className="text-[12px] text-slate-700 leading-relaxed">{takeaway.explanation}</p>
+                      {takeaway.hashtags && takeaway.hashtags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {takeaway.hashtags.map((tag, tagIdx) => (
+                            <span key={tagIdx} className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  
+                  {/* Last Updated Timestamp */}
+                  {lastUpdated && (
+                    <div className="text-center pt-3 border-t border-emerald-200/50">
+                      <span className="text-[10px] text-emerald-600">
+                        Last updated: {lastUpdated.toLocaleTimeString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  {isLoadingTakeaways ? (
+                    <div className="text-[14px] text-slate-600">
+                      {liveTakeaways === null ? "Fetching takeaways..." : "Loading takeaways..."}
+                    </div>
+                  ) : (
+                    <div className="text-[14px] text-slate-500">
+                      No live takeaways available yet
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* No Session Selected State */
+          <div className="relative">
+            {/* Background blur overlay */}
+            <div className="absolute inset-0 backdrop-blur-lg bg-white/20 rounded-[35px]"></div>
+            
+            {/* Content */}
+            <div className="relative border border-[#C7D0FF96] rounded-[35px] backdrop-blur-md p-6">
+              <div className="text-center py-8">
+                <div className="mb-3">
+                  <Sparkle className="w-8 h-8 text-slate-400 mx-auto" />
+                </div>
+                <h3 className="text-[16px] font-[600] text-slate-600 mb-2">No Session Selected</h3>
+                <p className="text-[12px] text-slate-500">
+                  Click the settings button to select a session and view live takeaways
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="flex items-center justify-center ">
