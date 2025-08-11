@@ -17,7 +17,7 @@ export default function SpeakersCard({ article }) {
           <div className="flex-1">
             <h2 className="text-[16px] flex gap-2 font-[600] mb-3">
               <span>🤙</span>
-              {title}
+              {title.charAt(0).toUpperCase() + title.slice(1)}
             </h2>
             <p className="text-gray-700 mb-4">
               {content}

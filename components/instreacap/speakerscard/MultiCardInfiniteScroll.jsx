@@ -220,3 +220,4 @@ export default function MultiCardInfiniteScroll({ articles = [], autoScroll = tr
     </div>
   );
 }
+

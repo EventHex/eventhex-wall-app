@@ -73,19 +73,27 @@ export const PhotoFlow = ({ eventId, eventData }) => {
         const isLeftToRight = Math.random() < 0.5;
         const animationClass = isLeftToRight ? 'animate-float-left' : 'animate-float-right';
         
+        // Random rotation for more dynamic movement
+        const rotation = (Math.random() - 0.5) * 20; // -10 to +10 degrees
+        
         // Position images on opposite sides based on animation direction
         let leftPosition, topPosition;
         if (isLeftToRight) {
-          // Left side images (10% to 40%)
-          leftPosition = 10 + (index % 3) * 10;
+          // Left side images (5% to 35%)
+          leftPosition = 5 + (index % 4) * 8;
         } else {
-          // Right side images (60% to 90%)
-          leftPosition = 60 + (index % 3) * 10;
+          // Right side images (65% to 95%)
+          leftPosition = 65 + (index % 4) * 8;
         }
         
-        // Distribute top positions evenly
-        topPosition = 5 + (index % 7) * 13;
-        const animationDelay = index * 1.5; // Staggered delays
+        // Distribute top positions more evenly across the height
+        topPosition = 3 + (index % 8) * 12;
+        
+        // No staggered delays - all images float simultaneously
+        const animationDelay = 0;
+        
+        // Random duration variation for more natural movement
+        const duration = 25 + Math.random() * 20; // 25-45 seconds
         
         return (
           <div
@@ -95,7 +103,10 @@ export const PhotoFlow = ({ eventId, eventData }) => {
               left: `${leftPosition}%`,
               top: `${topPosition}%`,
               animationDelay: `${animationDelay}s`,
-              zIndex: index
+              animationDuration: `${duration}s`,
+              '--rotation': `${rotation}deg`,
+              zIndex: index,
+              transform: `rotate(${rotation}deg)`
             }}
           >
             <Image
@@ -103,7 +114,7 @@ export const PhotoFlow = ({ eventId, eventData }) => {
               alt={photo.alt || "Wall photo"}
               width={156}
               height={136}
-              className="w-[160px] h-[130px] object-cover rounded-sm shadow-lg"
+              className="w-[160px] h-[130px] object-cover rounded-sm shadow-lg hover:scale-105 transition-transform duration-300"
               unoptimized
             />
           </div>

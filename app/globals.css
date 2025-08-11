@@ -32,24 +32,54 @@ body {
 .animate-float-left { 
   animation-name: float-left; 
   animation-duration: 30s;
-  animation-timing-function: linear;
+  animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-fill-mode: forwards;
+  will-change: transform;
 }
 .animate-float-right { 
   animation-name: float-right; 
   animation-duration: 30s;
-  animation-timing-function: linear;
+  animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-fill-mode: forwards;
+  will-change: transform;
 }
 @keyframes float-left {
-  0% { transform: translateX(-35vw) rotate(var(--rotation, 0deg)); }
-  100% { transform: translateX(105vw) rotate(var(--rotation, 0deg)); }
+  0% { 
+    transform: translateX(-35vw) rotate(var(--rotation, 0deg)) scale(0.8); 
+    opacity: 0.7;
+  }
+  20% { 
+    transform: translateX(-20vw) rotate(var(--rotation, 0deg)) scale(1); 
+    opacity: 1;
+  }
+  80% { 
+    transform: translateX(80vw) rotate(var(--rotation, 0deg)) scale(1); 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(105vw) rotate(var(--rotation, 0deg)) scale(0.8); 
+    opacity: 0.7;
+  }
 }
 @keyframes float-right {
-  0% { transform: translateX(105vw) rotate(var(--rotation, 0deg)); }
-  100% { transform: translateX(-35vw) rotate(var(--rotation, 0deg)); }
+  0% { 
+    transform: translateX(105vw) rotate(var(--rotation, 0deg)) scale(0.8); 
+    opacity: 0.7;
+  }
+  20% { 
+    transform: translateX(80vw) rotate(var(--rotation, 0deg)) scale(1); 
+    opacity: 1;
+  }
+  80% { 
+    transform: translateX(-20vw) rotate(var(--rotation, 0deg)) scale(1); 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(-35vw) rotate(var(--rotation, 0deg)) scale(0.8); 
+    opacity: 0.7;
+  }
 }
 .animate-shimmer {
   background-size: 200% 100%;
