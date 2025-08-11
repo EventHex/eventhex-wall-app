@@ -1,26 +1,33 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mic } from "lucide-react";
+import { Mic, Share2, Maximize2, Settings, Sparkle } from "lucide-react";
+import SpeakersCard from "@/components/instreacap/speakerscard";
 import RightSidebar from "@/components/instreacap/RightSidebar";
 import {
+  Mabrook,
+  MabrookBanner,
+  Barcode,
   BackgroundImage,
+  EventhexFooter,
   InstaRecapGlitter,
+  MicIcon,
 } from "@/public";
 import { getEventDetails } from '@/lib/data';
 import { fetchSessionDetail } from '@/utils/data';
-import axios from "axios";
+import Image from "next/image";
 
 export default function CapitalXClarityPage() {
   const [eventId, setEventId] = useState(null);
   const [eventData, setEventData] = useState(null);
+  const [articles, setArticles] = useState([]);
   const [domain, setDomain] = useState(null);
   const [selectedSession, setSelectedSession] = useState(null);
-  const [liveTakeaways, setLiveTakeaways] = useState(null);
-  const [isLoadingTakeaways, setIsLoadingTakeaways] = useState(false);
 
-  // Container ref for scrolling
+  // Auto-scroll refs and variables
   const containerRef = useRef(null);
+  const scrollSpeed = 1; // pixels per frame
+  const animationRef = useRef();
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -36,16 +43,21 @@ export default function CapitalXClarityPage() {
     const fetchSessionDetails = async () => {
       const sessionDetail = await fetchSessionDetail(eventId);
       console.log(sessionDetail, "sessionDetail from instarecap page");
+      // Transform API response to match existing card design props
+      const dynamicArticles = Array.isArray(sessionDetail?.sessions)
+        ? sessionDetail.sessions.map((s, index) => ({
+            id: s._id || index,
+            title: s.title || "",
+            content: s.description || "",
+            tags: ["#AiGen", "#Prediction", "#Strategy"],
+            author: s.speakers?.[0]?.name || null,
+          }))
+        : [];
+      setArticles(dynamicArticles);
       
       // Set the first session as default selected session only if no session is currently selected
-      if (sessionDetail?.sessions?.length > 0 && !selectedSession) {
-        const firstSession = sessionDetail.sessions[0];
-        setSelectedSession({
-          id: firstSession._id,
-          title: firstSession.title || "",
-          author: firstSession.speakers?.[0]?.name || null,
-          speaker: firstSession.speakers?.[0]?.name || null,
-        });
+      if (dynamicArticles.length > 0 && !selectedSession) {
+        setSelectedSession(dynamicArticles[0]);
       }
     }
     if (eventId) {
@@ -58,70 +70,67 @@ export default function CapitalXClarityPage() {
     setSelectedSession(session);
   };
 
-  // Function to refresh live takeaways
-  const refreshLiveTakeaways = () => {
-    if (selectedSession?.id) {
-      fetchLiveTakeaways(selectedSession.id);
-    }
-  };
+  // Auto-scroll functionality
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || articles.length === 0) return;
 
-  // Function to fetch live takeaways for the selected session
-  const fetchLiveTakeaways = async (sessionId) => {
-    if (!eventId || !sessionId) return;
-    
-    setIsLoadingTakeaways(true);
-    try {
-      const base = process.env.NEXT_PUBLIC_INSTARECAP_API || 'https://instarecap-app.ambitiousforest-1ab41110.centralindia.azurecontainerapps.io/api';
-      const response = await axios.get(`${base}/live/event/${eventId}/session/${sessionId}/takeaways`);
+    let scrollTop = 0;
+    const maxScroll = container.scrollHeight / 2; // Half because we'll duplicate content
+
+    const animate = () => {
+      scrollTop += scrollSpeed;
       
-      if (response.data.success && response.data.data) {
-        setLiveTakeaways(response.data.data);
-      } else {
-        setLiveTakeaways(null);
+      // Reset scroll position when we reach the end of the first set
+      if (scrollTop >= maxScroll) {
+        scrollTop = 0;
       }
-    } catch (error) {
-      console.error('Error fetching live takeaways:', error);
-      setLiveTakeaways(null);
-    } finally {
-      setIsLoadingTakeaways(false);
-    }
-  };
+      
+      container.scrollTop = scrollTop;
+      animationRef.current = requestAnimationFrame(animate);
+    };
 
-  // Fetch takeaways when selectedSession changes
-  useEffect(() => {
-    if (selectedSession?.id) {
-      fetchLiveTakeaways(selectedSession.id);
-    } else {
-      setLiveTakeaways(null);
-    }
-  }, [selectedSession, eventId]);
+    animationRef.current = requestAnimationFrame(animate);
 
-  // Set up periodic refresh of live takeaways
-  useEffect(() => {
-    if (!selectedSession?.id || !eventId) return;
+    // Pause scrolling on hover
+    const handleMouseEnter = () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
 
-    // Initial fetch
-    fetchLiveTakeaways(selectedSession.id);
+    const handleMouseLeave = () => {
+      animationRef.current = requestAnimationFrame(animate);
+    };
 
-    // Set up interval to refresh every 2 minutes
-    const interval = setInterval(() => {
-      fetchLiveTakeaways(selectedSession.id);
-    }, 120000); // 2 minutes
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
 
-    return () => clearInterval(interval);
-  }, [selectedSession, eventId]);
-
-
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [articles]);
 
   const [isLogoShow, setIsLogoShow] = useState(true);
   
-  // Use selected session data for header
-  const headerTitle = selectedSession?.title || "Select a Session";
-  const headerSpeaker = selectedSession?.author || "No speaker selected";
+  // Use selected session data for header, fallback to first article if no session selected
+  const headerTitle = selectedSession?.title || articles?.[0]?.title || "";
+  const headerSpeaker = selectedSession?.author || articles?.[0]?.author || "";
+
+  // Create duplicated articles array for infinite scrolling
+  const duplicatedArticles = [...articles, ...articles];
 
   return (
     <>
-
+      <style jsx>{`
+        .auto-scroll-container::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
       <div
         style={{
           backgroundImage: `url(${BackgroundImage.src})`,
@@ -143,120 +152,29 @@ export default function CapitalXClarityPage() {
               <div className=" mx-auto flex justify-between pt-[28px] items-center">
                 <div className="flex flex-col  gap-3">
                   <h1 className="text-[24px] font-[600] text-blue-600">{headerTitle}</h1>
-                  <p className="flex gap">
-                    <Mic />
-                    <span className="font-[500] text-[16px]">{headerSpeaker}</span>
+                  <p className="flex gap-[4px]">
+                  <Image src={MicIcon} alt="MicIcon" width={24} height={24} />
+                    <span className="font-[500] text-[16px] text-[#525866]">{headerSpeaker}</span>
                   </p>
                 </div>
-                {selectedSession && (
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-xs font-medium">Session Active</span>
-                    </div>
-                    <button
-                      onClick={refreshLiveTakeaways}
-                      className="flex items-center gap-2 px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors"
-                      title="Refresh live takeaways"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      <span className="text-sm font-medium">Refresh Takeaways</span>
-                    </button>
-                  </div>
-                )}
               </div>
             </header>
-            {/* Live Takeaways Display */}
+            {/* card loop with auto-scroll */}
             <div 
               ref={containerRef}
-              className="flex flex-col max-h-[80vh] px-10 gap-[25px] overflow-y-auto"
+              className="auto-scroll-container flex flex-col max-h-[80vh] px-10 gap-[25px] overflow-y-auto"
               style={{ 
                 scrollbarWidth: 'none', 
                 msOverflowStyle: 'none',
                 scrollBehavior: 'auto'
               }}
             >
-              {selectedSession ? (
-                isLoadingTakeaways ? (
-                  <div className="flex items-center justify-center py-20">
-                    <div className="text-center">
-                      <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className="text-emerald-600 font-medium">Loading live takeaways...</p>
-                    </div>
-                  </div>
-                ) : liveTakeaways && liveTakeaways.takeaways && liveTakeaways.takeaways.length > 0 ? (
-                  <>
-                    {/* Last Updated Info */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          <span className="text-sm font-medium text-blue-700">
-                            Live Takeaways • {liveTakeaways.takeaways.length} insights
-                          </span>
-                        </div>
-                        <span className="text-xs text-blue-600">
-                          Auto-refreshing every 2 minutes
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {liveTakeaways.takeaways.map((takeaway, index) => (
-                      <div key={index} className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                        <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0">
-                            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                              <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548-.547z" />
-                              </svg>
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">{takeaway.heading}</h3>
-                            <p className="text-gray-600 leading-relaxed mb-4">{takeaway.explanation}</p>
-                            {takeaway.hashtags && takeaway.hashtags.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {takeaway.hashtags.map((tag, tagIdx) => (
-                                  <span key={tagIdx} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                            {takeaway.confidence && (
-                              <div className="mt-3 text-sm text-gray-500">
-                                Confidence: {Math.round(takeaway.confidence * 100)}%
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <div className="text-center py-20">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Live Takeaways Yet</h3>
-                    <p className="text-gray-500">Live takeaways will appear here once the session starts generating content.</p>
-                  </div>
-                )
-              ) : (
-                <div className="text-center py-20">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Select a Session</h3>
-                  <p className="text-gray-500">Click the settings button in the sidebar to select a session and view live takeaways.</p>
-                </div>
-              )}
+              {duplicatedArticles.map((article, index) => (
+                <SpeakersCard 
+                  key={`${article.id}-${index}`} 
+                  article={article} 
+                />
+              ))}
             </div>
           </div>
           {/* right  */}
@@ -271,7 +189,6 @@ export default function CapitalXClarityPage() {
                 domain={domain}
                 onSessionSelect={handleSessionSelect}
                 selectedSession={selectedSession}
-                refreshLiveTakeaways={refreshLiveTakeaways}
               />
             )}
           </div>

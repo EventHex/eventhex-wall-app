@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -42,6 +43,43 @@ export const PhotoFlow = ({ eventId, eventData }) => {
     return [...photos].sort(() => Math.random() - 0.5);
   }, [photos]);
 
+  // Create stable random values for each photo to prevent repetition
+  const photoConfigs = useMemo(() => {
+    return shuffledPhotos.map((photo, index) => {
+      // Create a stable seed based on photo source to prevent repetition
+      const seed = photo.src ? photo.src.charCodeAt(0) + index : index;
+      const random = (seed * 9301 + 49297) % 233280; // Simple PRNG with seed
+      
+      // Use the seeded random for consistent positioning and animation
+      const isLeftToRight = (random % 2) === 0;
+      const rotation = ((random % 41) - 20) * 0.1; // -2 to +2 degrees
+      const duration = 25 + (random % 20); // 25-45 seconds
+      
+      // Position images on opposite sides based on animation direction
+      let leftPosition, topPosition;
+      if (isLeftToRight) {
+        // Left side images (5% to 35%)
+        leftPosition = 5 + (index % 4) * 8;
+      } else {
+        // Right side images (65% to 95%)
+        leftPosition = 65 + (index % 4) * 8;
+      }
+      
+      // Distribute top positions more evenly across the height
+      topPosition = 3 + (index % 8) * 12;
+      
+      return {
+        photo,
+        index,
+        isLeftToRight,
+        rotation,
+        duration,
+        leftPosition,
+        topPosition
+      };
+    });
+  }, [shuffledPhotos]);
+
   console.log(
     `Animation config - float-left/right duration: 30-60s | photos: ${photos.length} | loading: ${isLoading}`
   );
@@ -68,32 +106,13 @@ export const PhotoFlow = ({ eventId, eventData }) => {
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {shuffledPhotos.map((photo, index) => {
-        // Randomly decide if image floats left-to-right or right-to-left
-        const isLeftToRight = Math.random() < 0.5;
+      {photoConfigs.map((config, index) => {
+        const { photo, isLeftToRight, rotation, duration, leftPosition, topPosition } = config;
+        
         const animationClass = isLeftToRight ? 'animate-float-left' : 'animate-float-right';
-        
-        // Random rotation for more dynamic movement
-        const rotation = (Math.random() - 0.5) * 20; // -10 to +10 degrees
-        
-        // Position images on opposite sides based on animation direction
-        let leftPosition, topPosition;
-        if (isLeftToRight) {
-          // Left side images (5% to 35%)
-          leftPosition = 5 + (index % 4) * 8;
-        } else {
-          // Right side images (65% to 95%)
-          leftPosition = 65 + (index % 4) * 8;
-        }
-        
-        // Distribute top positions more evenly across the height
-        topPosition = 3 + (index % 8) * 12;
         
         // No staggered delays - all images float simultaneously
         const animationDelay = 0;
-        
-        // Random duration variation for more natural movement
-        const duration = 25 + Math.random() * 20; // 25-45 seconds
         
         return (
           <div
