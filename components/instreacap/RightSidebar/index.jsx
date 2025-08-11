@@ -186,7 +186,7 @@ export default function RightSidebar({
         selectedSession={selectedSession}
       />
       <div 
-      className="w-full  py-[22px] overflow-y-auto no-scrollbar">
+      className="w-full h-screen py-[22px] overflow-y-auto no-scrollbar">
         {/* Header */}
         <header className="px-6  pb-[18px]">
           <div
