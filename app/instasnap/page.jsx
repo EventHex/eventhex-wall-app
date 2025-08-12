@@ -61,7 +61,7 @@ const Index = (props) => {
                   backgroundClip: 'text',
                   fontWeight: '500'
                 }}>Uploaded</p>
-                <p>100</p>
+                {/* <p>100</p> */}
               </div>
             </div>
             <div className="flex gap-2">
@@ -75,7 +75,7 @@ const Index = (props) => {
                   backgroundClip: 'text',
                   fontWeight: '500'
                 }}>Retrieved</p>
-                <p>100</p>
+                {/* <p>100</p> */}
               </div>
              
             </div>
@@ -90,8 +90,8 @@ const Index = (props) => {
                   backgroundClip: 'text',
                   fontWeight: '500'
                 }}
-                >Hilights</p>
-                <p>100</p>
+                >Highlights</p>
+                {/* <p>100</p> */}
               </div>
             </div>
           </div>
