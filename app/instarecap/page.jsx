@@ -153,7 +153,8 @@ export default function CapitalXClarityPage() {
                 <div className="flex flex-col  gap-3">
                   <h1 className="text-[24px] font-[600] text-blue-600">{headerTitle}</h1>
                   <p className="flex gap-[4px]">
-                  <Image src={MicIcon} alt="MicIcon" width={24} height={24} />
+                  {/* <Image src={MicIcon} alt="MicIcon" width={24} height={24} /> */}
+                  <Mic className="w-[24px] h-[24px] text-[#525866]" />
                     <span className="font-[500] text-[16px] text-[#525866]">{headerSpeaker}</span>
                   </p>
                 </div>

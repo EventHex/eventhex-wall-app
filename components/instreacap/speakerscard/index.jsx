@@ -15,7 +15,7 @@ export default function SpeakersCard({ article }) {
         <div className="flex items-start gap-3">
           <div className="text-[22px]"></div>
           <div className="flex-1">
-            <h2 className="text-[16px] flex gap-2 font-[600] mb-3">
+            <h2 className="text-[16px] text-[#171717] flex gap-2 font-[600] mb-3">
               <span>🤙</span>
               {title.charAt(0).toUpperCase() + title.slice(1)}
             </h2>

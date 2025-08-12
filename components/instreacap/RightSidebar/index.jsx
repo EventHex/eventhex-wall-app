@@ -221,7 +221,7 @@ export default function RightSidebar({
                   onClick={() => setIsModalOpen(true)}
                   className="border border-[#D4D4D4] rounded-xl p-2 transition-all duration-200 hover:bg-gray-100 hover:scale-105 active:scale-95"
                 >
-                  <Settings className="w-[20px] h-[20px]" />
+                  <Settings color="#171717" className="w-[20px] h-[20px]" />
                 </button>
               )}
 
@@ -311,7 +311,7 @@ export default function RightSidebar({
                     {/* Text */}
                     <div className="flex flex-col items-center justify-center">
                       <h1 className="text-[18px] text-[#375DFB] font-[600]">
-                        Get Your Photos
+                        Get Your Lives
                       </h1>
                       <p className="text-[14px] text-center font-[400] text-[#525866]">
                         Scan to access your personalized photo gallery instantly
@@ -486,14 +486,13 @@ export default function RightSidebar({
               {/* Footer */}
               <div className="flex items-center justify-center ">
                 <p className="flex items-center justify-center gap-[8px]">
-                  <span className="text-[#989898]text-black text-[12px] font-[400]">
+                  <span className="text-black text-[12px] font-[400]">
                     Powered by
                   </span>
-                  {isInstaSnap ? (
-                    <Image src={InstasnapLogo} alt=" eventlogo" />
-                  ) : (
+                
+                
                     <Image src={EventhexFooter} alt="eventhex footer" />
-                  )}
+                 
                 </p>
               </div>
             </div>
