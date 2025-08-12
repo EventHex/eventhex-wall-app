@@ -78,10 +78,10 @@ export default function RightSidebar({
     // Initial fetch
     fetchLiveTakeaways(selectedSession.id);
 
-    // Set up interval to refresh every 2 minutes
+    // Set up interval to refresh every 5 minutes
     const interval = setInterval(() => {
       fetchLiveTakeaways(selectedSession.id);
-    }, 120000); // 2 minutes
+    }, 300000); // 5 minutes
 
     return () => clearInterval(interval);
   }, [selectedSession, eventId]);
