@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mic, Share2, Maximize2, Settings, Sparkle } from "lucide-react";
+import { Mic, Share2, Maximize2, Settings, Sparkle, Mic2 } from "lucide-react";
 import SpeakersCard from "@/components/instreacap/speakerscard";
 import RightSidebar from "@/components/instreacap/RightSidebar";
 import {
@@ -153,7 +153,8 @@ export default function CapitalXClarityPage() {
                 <div className="flex flex-col  gap-3">
                   <h1 className="text-[24px] font-[600] text-blue-600">{headerTitle}</h1>
                   <p className="flex gap-[4px]">
-                  <Image src={MicIcon} alt="MicIcon" width={24} height={24} />
+                  {/* <Image src={MicIcon} alt="MicIcon" width={24} height={24} /> */}
+                  <Mic />
                     <span className="font-[500] text-[16px] text-[#525866]">{headerSpeaker}</span>
                   </p>
                 </div>
