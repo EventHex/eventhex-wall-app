@@ -71,11 +71,19 @@ export default function CapitalXClarityPage() {
     
     setIsLoadingTakeaways(true);
     try {
-      const base = process.env.NEXT_PUBLIC_INSTARECAP_API || 'https://instarecap-app.ambitiousforest-1ab41110.centralindia.azurecontainerapps.io/api';
+      // const base = process.env.NEXT_PUBLIC_INSTARECAP_API || 'https://instarecap-app.ambitiousforest-1ab41110.centralindia.azurecontainerapps.io/api';
+      const base = "http://localhost:3005/api"
       const response = await axios.get(`${base}/live/event/${eventId}/session/${sessionId}/takeaways`);
       
       if (response.data.success && response.data.data) {
-        setLiveTakeaways(response.data.data);
+        // Handle both response formats:
+        // 1. Direct takeaways array (from non-live sessions)
+        // 2. Object with takeaways property (from live sessions)
+        const takeaways = Array.isArray(response.data.data) 
+          ? response.data.data 
+          : response.data.data.takeaways || [];
+        
+        setLiveTakeaways(takeaways);
       } else {
         setLiveTakeaways(null);
       }
@@ -103,10 +111,10 @@ export default function CapitalXClarityPage() {
     // Initial fetch
     fetchLiveTakeaways(selectedSession.id);
 
-    // Set up interval to refresh every 2 minutes
+    // Set up interval to refresh every 5 minutes
     const interval = setInterval(() => {
       fetchLiveTakeaways(selectedSession.id);
-    }, 120000); // 2 minutes
+    }, 300000); // 5 minutes
 
     return () => clearInterval(interval);
   }, [selectedSession, eventId]);
@@ -186,7 +194,7 @@ export default function CapitalXClarityPage() {
                       <p className="text-emerald-600 font-medium">Loading live takeaways...</p>
                     </div>
                   </div>
-                ) : liveTakeaways && liveTakeaways.takeaways && liveTakeaways.takeaways.length > 0 ? (
+                ) : liveTakeaways && liveTakeaways.length > 0 ? (
                   <>
                     {/* Last Updated Info */}
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
@@ -194,16 +202,16 @@ export default function CapitalXClarityPage() {
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                           <span className="text-sm font-medium text-blue-700">
-                            Live Takeaways • {liveTakeaways.takeaways.length} insights
+                            Live Takeaways • {liveTakeaways.length} insights
                           </span>
                         </div>
-                        <span className="text-xs text-blue-600">
-                          Auto-refreshing every 2 minutes
-                        </span>
+                        {/* <span className="text-xs text-blue-600">
+                          // Auto-refreshing every 5 minutes
+                        </span> */}
                       </div>
                     </div>
                     
-                    {liveTakeaways.takeaways.map((takeaway, index) => (
+                    {liveTakeaways.map((takeaway, index) => (
                       <div key={index} className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0">
